@@ -14,7 +14,7 @@ import gpsUtil.location.VisitedLocation;
 import tourGuideTracker.domain.FiveNearestAttractions;
 import tourGuideTracker.domain.UserLocation;
 import tourGuideTracker.service.TourGuideService;
-import tourGuideTracker.user.User;
+import tourGuideTracker.bean.UserBean;
 import tripPricer.Provider;
 
 @RestController
@@ -84,7 +84,7 @@ public class TourGuideController {
         return providers;
     }
 
-    private User getUser(String userName) {
+    private UserBean getUser(String userName) {
         return tourGuideService.getUser(userName);
     }
 }

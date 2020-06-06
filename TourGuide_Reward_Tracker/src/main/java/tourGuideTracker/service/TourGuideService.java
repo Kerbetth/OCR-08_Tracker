@@ -11,16 +11,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import gpsUtil.GpsUtil;
-import gpsUtil.location.Attraction;
-import gpsUtil.location.Location;
-import gpsUtil.location.VisitedLocation;
+import tourGuideTracker.util.GpsUtil;
+import tourGuideTracker.domain.Attraction;
+import tourGuideTracker.domain.Location;
+import tourGuideTracker.domain.VisitedLocation;
 import tourGuideTracker.domain.FiveNearestAttractions;
 import tourGuideTracker.domain.UserLocation;
 import tourGuideTracker.helper.InternalTestHelper;
 import tourGuideTracker.proxy.MicroserviceRewardsProxy;
 import tourGuideTracker.tracker.Tracker;
-import tourGuideTracker.user.User;
+import tourGuideTracker.bean.UserBean;
 import tourGuideTracker.user.UserPreferences;
 import tourGuideTracker.user.UserReward;
 import tripPricer.Provider;
@@ -56,11 +56,11 @@ public class TourGuideService {
         addShutDownHook();
     }
 
-    public List<UserReward> getUserRewards(User user) {
+    public List<UserReward> getUserRewards(UserBean user) {
         return user.getUserRewards();
     }
 
-    public VisitedLocation getUserLocation(User user) {
+    public VisitedLocation getUserLocation(UserBean user) {
         VisitedLocation visitedLocation = (user.getVisitedLocations().size() > 0) ?
                 user.getLastVisitedLocation() :
                 trackUserLocation(user);
@@ -70,7 +70,7 @@ public class TourGuideService {
 
     public List<UserLocation> getLocationOfAllUsers() {
         List<UserLocation> userLocations = new ArrayList<>();
-        for (User user : getAllUsers()) {
+        for (UserBean user : getAllUsers()) {
             UserLocation userLocation = new UserLocation();
             userLocation.setUserID(user.getUserId());
             userLocation.setLatLongUser((user.getVisitedLocations().size() > 0) ?
@@ -81,21 +81,21 @@ public class TourGuideService {
         return userLocations;
     }
 
-    public User getUser(String userName) {
+    public UserBean getUser(String userName) {
         return internalUserMap.get(userName);
     }
 
-    public List<User> getAllUsers() {
+    public List<UserBean> getAllUsers() {
         return internalUserMap.values().stream().collect(Collectors.toList());
     }
 
-    public void addUser(User user) {
+    public void addUser(UserBean user) {
         if (!internalUserMap.containsKey(user.getUserName())) {
             internalUserMap.put(user.getUserName(), user);
         }
     }
 
-    public List<Provider> getTripDeals(User user) {
+    public List<Provider> getTripDeals(UserBean user) {
         int cumulatativeRewardPoints = user.getUserRewards().stream().mapToInt(i -> i.getRewardPoints()).sum();
         List<Provider> providers = tripPricer.getPrice(tripPricerApiKey, user.getUserId(), user.getUserPreferences().getNumberOfAdults(),
                 user.getUserPreferences().getNumberOfChildren(), user.getUserPreferences().getTripDuration(), cumulatativeRewardPoints);
@@ -103,7 +103,7 @@ public class TourGuideService {
         return providers;
     }
 
-    public VisitedLocation trackUserLocation(User user) {
+    public VisitedLocation trackUserLocation(UserBean user) {
         VisitedLocation visitedLocation = gpsUtil.getUserLocation(user.getUserId());
         user.addToVisitedLocations(visitedLocation);
         rewardsService.calculateRewards(user);
@@ -165,7 +165,7 @@ public class TourGuideService {
     }
 
 
-    public List<Attraction> pertinenteAttractions(User user) {
+    public List<Attraction> pertinenteAttractions(UserBean user) {
         List<Attraction> pertinentAttractions = new ArrayList<>();
 
         return pertinentAttractions;
@@ -200,7 +200,7 @@ public class TourGuideService {
         userPreferences.setNumberOfChildren(numberOfChildren);
         userPreferences.setTripDuration(tripDuration);
         userPreferences.setHighPricePoint(Money.of(highPricePoint, Monetary.getCurrency("USD")));
-        User user= getUser(userName);
+        UserBean user= getUser(userName);
         user.setUserPreferences(userPreferences);
         internalUserMap.put(userName, user);
     }
@@ -212,14 +212,14 @@ public class TourGuideService {
      **********************************************************************************/
     private static final String tripPricerApiKey = "test-server-api-key";
     // Database connection will be used for external users, but for testing purposes internal users are provided and stored in memory
-    private final Map<String, User> internalUserMap = new HashMap<>();
+    private final Map<String, UserBean> internalUserMap = new HashMap<>();
 
     private void initializeInternalUsers() {
         IntStream.range(0, InternalTestHelper.getInternalUserNumber()).forEach(i -> {
             String userName = "internalUser" + i;
             String phone = "000";
             String email = userName + "@tourGuide.com";
-            User user = new User(UUID.randomUUID(), userName, phone, email);
+            UserBean user = new UserBean(UUID.randomUUID(), userName, phone, email);
             generateUserLocationHistory(user);
 
             internalUserMap.put(userName, user);
@@ -227,7 +227,7 @@ public class TourGuideService {
         logger.debug("Created " + InternalTestHelper.getInternalUserNumber() + " internal test users.");
     }
 
-    private void generateUserLocationHistory(User user) {
+    private void generateUserLocationHistory(UserBean user) {
         IntStream.range(0, 3).forEach(i -> {
             user.addToVisitedLocations(new VisitedLocation(user.getUserId(), new Location(generateRandomLatitude(), generateRandomLongitude()), getRandomTime()));
         });

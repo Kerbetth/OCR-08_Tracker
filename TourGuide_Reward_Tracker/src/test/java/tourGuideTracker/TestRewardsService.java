@@ -16,7 +16,7 @@ import rewardCentral.RewardCentral;
 import tourGuideTracker.helper.InternalTestHelper;
 import tourGuideTracker.service.RewardsService;
 import tourGuideTracker.service.TourGuideService;
-import tourGuideTracker.user.User;
+import tourGuideTracker.bean.UserBean;
 import tourGuideTracker.user.UserReward;
 
 public class TestRewardsService {
@@ -29,7 +29,7 @@ public class TestRewardsService {
 		InternalTestHelper.setInternalUserNumber(0);
 		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
 		
-		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
+		UserBean user = new UserBean(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
 		Attraction attraction = gpsUtil.getAttractions().get(0);
 		user.addToVisitedLocations(new VisitedLocation(user.getUserId(), attraction, new Date()));
 		tourGuideService.trackUserLocation(user);

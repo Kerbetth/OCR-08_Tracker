@@ -18,7 +18,7 @@ import rewardCentral.RewardCentral;
 import tourGuideTracker.helper.InternalTestHelper;
 import tourGuideTracker.service.RewardsService;
 import tourGuideTracker.service.TourGuideService;
-import tourGuideTracker.user.User;
+import tourGuideTracker.bean.UserBean;
 
 public class TestPerformance {
 
@@ -78,17 +78,17 @@ public class TestPerformance {
         TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
 
         Attraction attraction = gpsUtil.getAttractions().get(0);
-        List<User> allUsers = new ArrayList<>();
+        List<UserBean> allUsers = new ArrayList<>();
         allUsers = tourGuideService.getAllUsers();
         allUsers.forEach(u -> u.addToVisitedLocations(new VisitedLocation(u.getUserId(), attraction, new Date())));
 
         allUsers.forEach(u -> rewardsService.calculateRewards(u));
-        for (User user : allUsers) {
+        for (UserBean user : allUsers) {
             user.addToVisitedLocations(new VisitedLocation(user.getUserId(), attraction, new Date()));
             rewardsService.calculateRewards(user);
         }
 
-        for (User user : allUsers) {
+        for (UserBean user : allUsers) {
             assertTrue(user.getUserRewards().size() > 0);
         }
         stopWatch.stop();

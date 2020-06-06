@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tourGuideTracker.service.TourGuideService;
-import tourGuideTracker.user.User;
+import tourGuideTracker.bean.UserBean;
 
 public class Tracker extends Thread {
 	private Logger logger = LoggerFactory.getLogger(Tracker.class);
@@ -42,7 +42,7 @@ public class Tracker extends Thread {
 				break;
 			}
 			
-			List<User> users = tourGuideService.getAllUsers();
+			List<UserBean> users = tourGuideService.getAllUsers();
 			logger.debug("Begin Tracker. Tracking " + users.size() + " users.");
 			stopWatch.start();
 			users.forEach(u -> tourGuideService.trackUserLocation(u));
