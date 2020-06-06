@@ -15,6 +15,7 @@ import rewardCentral.RewardCentral;
 import tourGuideTracker.domain.VisitedLocation;
 import tourGuideTracker.domain.location.Attraction;
 import tourGuideTracker.helper.InternalTestHelper;
+import tourGuideTracker.proxy.ServiceUserProxy;
 import tourGuideTracker.service.RewardsService;
 import tourGuideTracker.service.TrackerService;
 import tourGuideTracker.bean.UserService.UserBean;
@@ -41,21 +42,23 @@ public class TestPerformance {
      *     highVolumeGetRewards: 100,000 users within 20 minutes:
      *          assertTrue(TimeUnit.MINUTES.toSeconds(20) >= TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()));
      */
-/*
+
+    ServiceUserProxy serviceUserProxy;
+
     @Test
     public void highVolumeTrackLocation() {
         GpsUtil gpsUtil = new GpsUtil();
-        RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
+
         // Users should be incremented up to 100,000, and test finishes within 15 minutes
         InternalTestHelper.setInternalUserNumber(100);
-        TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
+        TrackerService tourGuideService = new TrackerService(gpsUtil);
 
-        List<User> allUsers = new ArrayList<>();
-        allUsers = tourGuideService.getAllUsers();
+        List<UserBean> allUsers = new ArrayList<>();
+        allUsers = serviceUserProxy.getAllUsers();
 
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
-        for (User user : allUsers) {
+        for (UserBean user : allUsers) {
             tourGuideService.trackUserLocation(user);
         }
         stopWatch.stop();
@@ -64,7 +67,7 @@ public class TestPerformance {
         System.out.println("highVolumeTrackLocation: Time Elapsed: " + TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()) + " seconds.");
         assertTrue(TimeUnit.MINUTES.toSeconds(15) >= TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()));
     }
-*/
+
 
     @Test
     public void highVolumeGetRewards() {
@@ -75,11 +78,11 @@ public class TestPerformance {
         InternalTestHelper.setInternalUserNumber(10_000);
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
-        TrackerService trackerService = new TrackerService(gpsUtil, rewardsService);
+        TrackerService trackerService = new TrackerService(gpsUtil);
 
         Attraction attraction = gpsUtil.getAttractions().get(0);
         List<UserBean> allUsers = new ArrayList<>();
-        allUsers = trackerService.getAllUsers();
+        allUsers = serviceUserProxy.getAllUsers();
         allUsers.forEach(u -> u.addToVisitedLocations(new VisitedLocation(u.getUserId(), attraction, new Date())));
 
         allUsers.forEach(u -> rewardsService.calculateRewards(u));

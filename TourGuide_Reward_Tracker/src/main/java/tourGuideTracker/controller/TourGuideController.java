@@ -3,11 +3,9 @@ package tourGuideTracker.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.jsoniter.output.JsonStream;
 
 
@@ -15,8 +13,6 @@ import tourGuideTracker.domain.FiveNearestAttractions;
 import tourGuideTracker.domain.UserLocation;
 import tourGuideTracker.domain.VisitedLocation;
 import tourGuideTracker.service.TrackerService;
-import tourGuideTracker.bean.UserService.UserBean;
-import tripPricer.Provider;
 
 @RestController
 public class TourGuideController {
@@ -31,7 +27,7 @@ public class TourGuideController {
 
     @RequestMapping("/getLocation")
     public String getLocation(@RequestParam String userName) {
-        VisitedLocation visitedLocation = trackerService.getUserLocation(getUser(userName));
+        VisitedLocation visitedLocation = trackerService.getUserLocation(userName);
         return JsonStream.serialize(visitedLocation.location);
     }
 
@@ -46,7 +42,7 @@ public class TourGuideController {
     //    Note: Attraction reward points can be gathered from RewardsCentral
     @RequestMapping("/getNearbyAttractions")
     public FiveNearestAttractions getNearbyAttractions(@RequestParam String userName) {
-        VisitedLocation visitedLocation = trackerService.getUserLocation(getUser(userName));
+        VisitedLocation visitedLocation = trackerService.getUserLocation(userName);
         return trackerService.get5NearestAttractions(visitedLocation);
     }
 
@@ -62,9 +58,5 @@ public class TourGuideController {
         //        ...
         //     }
         return trackerService.getLocationOfAllUsers();
-    }
-
-    private UserBean getUser(String userName) {
-        return trackerService.getUser(userName);
     }
 }

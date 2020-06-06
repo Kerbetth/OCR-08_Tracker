@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import tourGuideTracker.proxy.ServiceUserProxy;
 import tourGuideTracker.util.GpsUtil;
 import tourGuideTracker.domain.location.Attraction;
 import tourGuideTracker.domain.location.Location;
@@ -18,29 +19,29 @@ import tourGuideTracker.domain.VisitedLocation;
 import tourGuideTracker.domain.FiveNearestAttractions;
 import tourGuideTracker.domain.UserLocation;
 import tourGuideTracker.helper.InternalTestHelper;
-import tourGuideTracker.proxy.MicroserviceRewardsProxy;
+import tourGuideTracker.proxy.ServiceRewardsProxy;
 import tourGuideTracker.tracker.Tracker;
 import tourGuideTracker.bean.UserService.UserBean;
-import tripPricer.TripPricer;
 
 
 @Service
 public class TrackerService {
+
     private Logger logger = LoggerFactory.getLogger(TrackerService.class);
     private final GpsUtil gpsUtil;
-    private final RewardsService rewardsService;
-
-    private MicroserviceRewardsProxy microserviceRewardsProxy;
+    private ServiceRewardsProxy serviceRewardsProxy;
+    private ServiceUserProxy serviceUserProxy;
     public final Tracker tracker;
     boolean testMode = true;
+
     private static final double STATUTE_MILES_PER_NAUTICAL_MILE = 1.15077945;
     private int defaultProximityBuffer = 10;
     private int proximityBuffer = defaultProximityBuffer;
     private int attractionProximityRange = 200;
 
-    public TrackerService(GpsUtil gpsUtil, RewardsService rewardsService) {
+
+    public TrackerService(GpsUtil gpsUtil) {
         this.gpsUtil = gpsUtil;
-        this.rewardsService = rewardsService;
 
         if (testMode) {
             logger.info("TestMode enabled");
@@ -52,7 +53,8 @@ public class TrackerService {
         addShutDownHook();
     }
 
-    public VisitedLocation getUserLocation(UserBean user) {
+    public VisitedLocation getUserLocation(String userName) {
+        UserBean user = serviceUserProxy.getUser(userName);
         VisitedLocation visitedLocation = (user.getVisitedLocations().size() > 0) ?
                 user.getLastVisitedLocation() :
                 trackUserLocation(user);
@@ -62,7 +64,7 @@ public class TrackerService {
 
     public List<UserLocation> getLocationOfAllUsers() {
         List<UserLocation> userLocations = new ArrayList<>();
-        for (UserBean user : getAllUsers()) {
+        for (UserBean user : serviceUserProxy.getAllUsers()) {
             UserLocation userLocation = new UserLocation();
             userLocation.setUserID(user.getUserId());
             userLocation.setLatLongUser((user.getVisitedLocations().size() > 0) ?
@@ -73,19 +75,12 @@ public class TrackerService {
         return userLocations;
     }
 
-    public UserBean getUser(String userName) {
-        return internalUserMap.get(userName);
-    }
-
-    public List<UserBean> getAllUsers() {
-        return internalUserMap.values().stream().collect(Collectors.toList());
-    }
 
 
     public VisitedLocation trackUserLocation(UserBean user) {
         VisitedLocation visitedLocation = gpsUtil.getUserLocation(user.getUserId());
         user.addToVisitedLocations(visitedLocation);
-        rewardsService.calculateRewards(user);
+        serviceRewardsProxy.calculateRewards(user);
         return visitedLocation;
     }
 
@@ -106,7 +101,7 @@ public class TrackerService {
                     attractionsName.add(attraction.attractionName);
                     attractionsLocation.add(new Location(attraction.longitude, attraction.latitude));
                     attractionsDistance.add(getDistance(attraction, visitedLocation.location));
-                    attractionsRewardPoints.add(microserviceRewardsProxy.getRewards(attraction.attractionId, visitedLocation.userId));
+                    attractionsRewardPoints.add(serviceRewardsProxy.getRewards(attraction.attractionId, visitedLocation.userId));
                 }
             });
             fiveNearestAttractions.setAttractionName(attractionsName);

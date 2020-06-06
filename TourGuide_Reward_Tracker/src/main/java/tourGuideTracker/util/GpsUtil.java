@@ -1,5 +1,6 @@
 package tourGuideTracker.util;
 
+import org.springframework.stereotype.Repository;
 import tourGuideTracker.domain.location.Attraction;
 import tourGuideTracker.domain.location.Location;
 import tourGuideTracker.domain.VisitedLocation;
@@ -10,6 +11,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
+
+@Repository
 public class GpsUtil {
 
     public GpsUtil() {
