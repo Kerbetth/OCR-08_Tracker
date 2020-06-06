@@ -14,11 +14,11 @@ import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
 import tourGuideTracker.domain.VisitedLocation;
 import tourGuideTracker.domain.location.Attraction;
-import tourGuideTracker.repositorie.proxy.ServiceUserProxy;
+import tourGuideTracker.repository.proxy.ServiceUserProxy;
 import tourGuideTracker.service.RewardsService;
 import tourGuideTracker.service.TrackerService;
 import tourGuideTracker.bean.UserService.UserBean;
-import tourGuideTracker.repositorie.GpsUtil;
+import tourGuideTracker.repository.GpsUtil;
 
 public class TestPerformance {
 

@@ -10,14 +10,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import tourGuideTracker.repositorie.proxy.ServiceUserProxy;
-import tourGuideTracker.repositorie.GpsUtil;
+import tourGuideTracker.repository.proxy.ServiceUserProxy;
+import tourGuideTracker.repository.GpsUtil;
 import tourGuideTracker.domain.location.Attraction;
 import tourGuideTracker.domain.location.Location;
 import tourGuideTracker.domain.VisitedLocation;
 import tourGuideTracker.domain.FiveNearestAttractions;
 import tourGuideTracker.domain.UserLocation;
-import tourGuideTracker.repositorie.proxy.ServiceRewardsProxy;
+import tourGuideTracker.repository.proxy.ServiceRewardsProxy;
 import tourGuideTracker.tracker.Tracker;
 import tourGuideTracker.bean.UserService.UserBean;
 
