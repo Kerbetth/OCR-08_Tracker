@@ -3,40 +3,41 @@ package tourGuideTracker.service;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import tourGuideTracker.proxy.ServiceUserProxy;
-import tourGuideTracker.util.GpsUtil;
+import tourGuideTracker.repositorie.proxy.ServiceUserProxy;
+import tourGuideTracker.repositorie.GpsUtil;
 import tourGuideTracker.domain.location.Attraction;
 import tourGuideTracker.domain.location.Location;
 import tourGuideTracker.domain.VisitedLocation;
 import tourGuideTracker.domain.FiveNearestAttractions;
 import tourGuideTracker.domain.UserLocation;
-import tourGuideTracker.helper.InternalTestHelper;
-import tourGuideTracker.proxy.ServiceRewardsProxy;
+import tourGuideTracker.repositorie.proxy.ServiceRewardsProxy;
 import tourGuideTracker.tracker.Tracker;
 import tourGuideTracker.bean.UserService.UserBean;
 
 
 @Service
+@Slf4j
 public class TrackerService {
 
-    private Logger logger = LoggerFactory.getLogger(TrackerService.class);
+    @Autowired
     private final GpsUtil gpsUtil;
+    @Autowired
     private ServiceRewardsProxy serviceRewardsProxy;
+    @Autowired
     private ServiceUserProxy serviceUserProxy;
+
     public final Tracker tracker;
     boolean testMode = true;
 
     private static final double STATUTE_MILES_PER_NAUTICAL_MILE = 1.15077945;
-    private int defaultProximityBuffer = 10;
-    private int proximityBuffer = defaultProximityBuffer;
+    private int proximityBuffer = 10;
     private int attractionProximityRange = 200;
 
 
@@ -44,10 +45,10 @@ public class TrackerService {
         this.gpsUtil = gpsUtil;
 
         if (testMode) {
-            logger.info("TestMode enabled");
-            logger.debug("Initializing users");
+            log.info("TestMode enabled");
+            log.debug("Initializing users");
             initializeInternalUsers();
-            logger.debug("Finished initializing users");
+            log.debug("Finished initializing users");
         }
         tracker = new Tracker(this);
         addShutDownHook();
@@ -76,7 +77,6 @@ public class TrackerService {
     }
 
 
-
     public VisitedLocation trackUserLocation(UserBean user) {
         VisitedLocation visitedLocation = gpsUtil.getUserLocation(user.getUserId());
         user.addToVisitedLocations(visitedLocation);
@@ -85,34 +85,34 @@ public class TrackerService {
     }
 
     public FiveNearestAttractions get5NearestAttractions(VisitedLocation visitedLocation) {
-            Map<Double, Attraction> attractionsByDistance = new TreeMap<>();
-            FiveNearestAttractions fiveNearestAttractions = new FiveNearestAttractions();
-            List<String> attractionsName = new ArrayList<>();
-            List<Location> attractionsLocation = new ArrayList<>();
-            List<Double> attractionsDistance = new ArrayList<>();
-            List<Integer> attractionsRewardPoints = new ArrayList<>();
-            int gatheredReward = 0;
-            for (Attraction attraction : gpsUtil.getAttractions()) {
-                attractionsByDistance.put(getDistance(attraction, visitedLocation.location), attraction);
-            }
+        Map<Double, Attraction> attractionsByDistance = new TreeMap<>();
+        FiveNearestAttractions fiveNearestAttractions = new FiveNearestAttractions();
+        List<String> attractionsName = new ArrayList<>();
+        List<Location> attractionsLocation = new ArrayList<>();
+        List<Double> attractionsDistance = new ArrayList<>();
+        List<Integer> attractionsRewardPoints = new ArrayList<>();
+        int gatheredReward = 0;
+        for (Attraction attraction : gpsUtil.getAttractions()) {
+            attractionsByDistance.put(getDistance(attraction, visitedLocation.location), attraction);
+        }
 
-            attractionsByDistance.forEach((distance, attraction) -> {
-                if (attractionsName.size() < 5) {
-                    attractionsName.add(attraction.attractionName);
-                    attractionsLocation.add(new Location(attraction.longitude, attraction.latitude));
-                    attractionsDistance.add(getDistance(attraction, visitedLocation.location));
-                    attractionsRewardPoints.add(serviceRewardsProxy.getRewards(attraction.attractionId, visitedLocation.userId));
-                }
-            });
-            fiveNearestAttractions.setAttractionName(attractionsName);
-            fiveNearestAttractions.setLatLongUser(visitedLocation.location);
-            fiveNearestAttractions.setLatLongAttraction(attractionsLocation);
-            fiveNearestAttractions.setDistance(attractionsDistance);
-            for (Integer rewardPoints : attractionsRewardPoints) {
-                gatheredReward += rewardPoints;
+        attractionsByDistance.forEach((distance, attraction) -> {
+            if (attractionsName.size() < 5) {
+                attractionsName.add(attraction.attractionName);
+                attractionsLocation.add(new Location(attraction.longitude, attraction.latitude));
+                attractionsDistance.add(getDistance(attraction, visitedLocation.location));
+                attractionsRewardPoints.add(serviceRewardsProxy.getRewards(attraction.attractionId, visitedLocation.userId));
             }
-            fiveNearestAttractions.setAttractionRewardPoints(gatheredReward);
-            return fiveNearestAttractions;
+        });
+        fiveNearestAttractions.setAttractionName(attractionsName);
+        fiveNearestAttractions.setLatLongUser(visitedLocation.location);
+        fiveNearestAttractions.setLatLongAttraction(attractionsLocation);
+        fiveNearestAttractions.setDistance(attractionsDistance);
+        for (Integer rewardPoints : attractionsRewardPoints) {
+            gatheredReward += rewardPoints;
+        }
+        fiveNearestAttractions.setAttractionRewardPoints(gatheredReward);
+        return fiveNearestAttractions;
     }
 
     public double getDistance(Location loc1, Location loc2) {
@@ -130,8 +130,8 @@ public class TrackerService {
     }
 
     private boolean nearAttraction(Location visitedLocation, Attraction attraction) {
-        if(Math.abs(attraction.longitude-visitedLocation.longitude)< proximityBuffer){
-            if(Math.abs(attraction.latitude-visitedLocation.latitude)< proximityBuffer){
+        if (Math.abs(attraction.longitude - visitedLocation.longitude) < proximityBuffer) {
+            if (Math.abs(attraction.latitude - visitedLocation.latitude) < proximityBuffer) {
                 return getDistance(attraction, visitedLocation) > proximityBuffer ? false : true;
             }
         }
@@ -174,12 +174,18 @@ public class TrackerService {
      * Methods Below: For Internal Testing
      *
      **********************************************************************************/
+    private static int internalUserNumber = 100;
+
+    public static void setInternalUserNumber(int internalUserNumber) {
+        internalUserNumber = internalUserNumber;
+    }
+
     private static final String tripPricerApiKey = "test-server-api-key";
     // Database connection will be used for external users, but for testing purposes internal users are provided and stored in memory
     private final Map<String, UserBean> internalUserMap = new HashMap<>();
 
     private void initializeInternalUsers() {
-        IntStream.range(0, InternalTestHelper.getInternalUserNumber()).forEach(i -> {
+        IntStream.range(0, internalUserNumber).forEach(i -> {
             String userName = "internalUser" + i;
             String phone = "000";
             String email = userName + "@tourGuide.com";
@@ -188,7 +194,7 @@ public class TrackerService {
 
             internalUserMap.put(userName, user);
         });
-        logger.debug("Created " + InternalTestHelper.getInternalUserNumber() + " internal test users.");
+        log.debug("Created " + internalUserNumber + " internal test users.");
     }
 
     private void generateUserLocationHistory(UserBean user) {

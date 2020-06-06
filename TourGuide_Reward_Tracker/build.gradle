@@ -41,13 +41,11 @@ dependencies {
 	compile group: 'com.jsoniter', name: 'jsoniter', version: '0.9.23'
 	compile group: 'org.springframework.cloud', name: 'spring-cloud-core', version: '1.2.9.RELEASE'
     compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '2.1.2.RELEASE'
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.30'
+    compile group: 'org.projectlombok', name: 'lombok', version: '1.18.12'
 
     compile 'org.springframework.cloud:spring-cloud-starter-feign:1.2.6.RELEASE'
     compile "com.netflix.hystrix:hystrix-javanica:1.5.10"
-
-    compile(name:'gpsUtil', ext:'jar')
-    compile(name:'RewardCentral', ext:'jar')
-    compile(name:'TripPricer', ext:'jar')
 
     testCompile("junit:junit")
     testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '2.2.6.RELEASE'

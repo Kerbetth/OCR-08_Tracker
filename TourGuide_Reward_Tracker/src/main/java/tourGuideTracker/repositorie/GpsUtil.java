@@ -1,4 +1,4 @@
-package tourGuideTracker.util;
+package tourGuideTracker.repositorie;
 
 import org.springframework.stereotype.Repository;
 import tourGuideTracker.domain.location.Attraction;
