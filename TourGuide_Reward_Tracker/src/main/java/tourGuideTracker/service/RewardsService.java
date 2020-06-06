@@ -1,5 +1,6 @@
 package tourGuideTracker.service;
 
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -9,8 +10,9 @@ import gpsUtil.GpsUtil;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.VisitedLocation;
 import rewardCentral.RewardCentral;
-import tourGuideTracker.bean.UserBean;
+import tourGuideTracker.bean.UserService.UserBean;
 import tourGuideTracker.user.UserReward;
+import tripPricer.Provider;
 
 @Service
 public class RewardsService {
@@ -49,7 +51,13 @@ public class RewardsService {
 
     }
 
-
+    public List<Provider> getTripDeals(UserBean user) {
+        int cumulatativeRewardPoints = user.getUserRewards().stream().mapToInt(i -> i.getRewardPoints()).sum();
+        List<Provider> providers = tripPricer.getPrice(tripPricerApiKey, user.getUserId(), user.getUserPreferences().getNumberOfAdults(),
+                user.getUserPreferences().getNumberOfChildren(), user.getUserPreferences().getTripDuration(), cumulatativeRewardPoints);
+        user.setTripDeals(providers);
+        return providers;
+    }
     private int getRewardPoints(Attraction attraction, UserBean user) {
         //rewardsCentral.getAttractionRewardPoints(attraction.attractionId, user.getUserId());
         return ThreadLocalRandom.current().nextInt(1, 1000);

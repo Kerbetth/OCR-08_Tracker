@@ -1,16 +1,14 @@
 package tourGuideTracker.util;
 
-import com.google.common.util.concurrent.RateLimiter;
-import gpsUtil.location.Attraction;
-import gpsUtil.location.Location;
-import gpsUtil.location.VisitedLocation;
+import tourGuideTracker.domain.location.Attraction;
+import tourGuideTracker.domain.location.Location;
+import tourGuideTracker.domain.VisitedLocation;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.TimeUnit;
 
 public class GpsUtil {
 

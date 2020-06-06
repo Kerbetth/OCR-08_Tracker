@@ -1,4 +1,4 @@
-package tourGuideTracker;
+package tourGuideTracker.controller;
 
 import java.util.List;
 
@@ -10,18 +10,19 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.jsoniter.output.JsonStream;
 
-import gpsUtil.location.VisitedLocation;
+
 import tourGuideTracker.domain.FiveNearestAttractions;
 import tourGuideTracker.domain.UserLocation;
-import tourGuideTracker.service.TourGuideService;
-import tourGuideTracker.bean.UserBean;
+import tourGuideTracker.domain.VisitedLocation;
+import tourGuideTracker.service.TrackerService;
+import tourGuideTracker.bean.UserService.UserBean;
 import tripPricer.Provider;
 
 @RestController
 public class TourGuideController {
 
     @Autowired
-    TourGuideService tourGuideService;
+    TrackerService trackerService;
 
     @RequestMapping("/")
     public String index() {
@@ -30,7 +31,7 @@ public class TourGuideController {
 
     @RequestMapping("/getLocation")
     public String getLocation(@RequestParam String userName) {
-        VisitedLocation visitedLocation = tourGuideService.getUserLocation(getUser(userName));
+        VisitedLocation visitedLocation = trackerService.getUserLocation(getUser(userName));
         return JsonStream.serialize(visitedLocation.location);
     }
 
@@ -45,23 +46,8 @@ public class TourGuideController {
     //    Note: Attraction reward points can be gathered from RewardsCentral
     @RequestMapping("/getNearbyAttractions")
     public FiveNearestAttractions getNearbyAttractions(@RequestParam String userName) {
-        VisitedLocation visitedLocation = tourGuideService.getUserLocation(getUser(userName));
-        return tourGuideService.get5NearestAttractions(visitedLocation);
-    }
-
-    @PostMapping("/setUserPreferences")
-    public void setUserPreferences(
-            @RequestParam String userName,
-            Integer numberOfAdults,
-            Integer numberOfChildren,
-            Integer tripDuration,
-            Integer highPricePoint,
-            Integer lowerPricePoint
-    ) {
-        if (highPricePoint == 0) {
-            highPricePoint = 999_999;
-        }
-        tourGuideService.setUserPreferences(userName, numberOfAdults, numberOfChildren, tripDuration, highPricePoint, lowerPricePoint);
+        VisitedLocation visitedLocation = trackerService.getUserLocation(getUser(userName));
+        return trackerService.get5NearestAttractions(visitedLocation);
     }
 
     @RequestMapping("/getAllCurrentLocations")
@@ -75,16 +61,10 @@ public class TourGuideController {
         //        "019b04a9-067a-4c76-8817-ee75088c3822": {"longitude":-48.188821,"latitude":74.84371}
         //        ...
         //     }
-        return tourGuideService.getLocationOfAllUsers();
-    }
-
-    @RequestMapping("/getTripDeals")
-    public List<Provider> getTripDeals(@RequestParam String userName) {
-        List<Provider> providers = tourGuideService.getTripDeals(getUser(userName));
-        return providers;
+        return trackerService.getLocationOfAllUsers();
     }
 
     private UserBean getUser(String userName) {
-        return tourGuideService.getUser(userName);
+        return trackerService.getUser(userName);
     }
 }

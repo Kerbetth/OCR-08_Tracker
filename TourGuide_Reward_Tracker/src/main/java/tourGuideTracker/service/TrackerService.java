@@ -6,34 +6,30 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import org.javamoney.moneta.Money;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import tourGuideTracker.util.GpsUtil;
-import tourGuideTracker.domain.Attraction;
-import tourGuideTracker.domain.Location;
+import tourGuideTracker.domain.location.Attraction;
+import tourGuideTracker.domain.location.Location;
 import tourGuideTracker.domain.VisitedLocation;
 import tourGuideTracker.domain.FiveNearestAttractions;
 import tourGuideTracker.domain.UserLocation;
 import tourGuideTracker.helper.InternalTestHelper;
 import tourGuideTracker.proxy.MicroserviceRewardsProxy;
 import tourGuideTracker.tracker.Tracker;
-import tourGuideTracker.bean.UserBean;
-import tourGuideTracker.user.UserPreferences;
-import tourGuideTracker.user.UserReward;
-import tripPricer.Provider;
+import tourGuideTracker.bean.UserService.UserBean;
 import tripPricer.TripPricer;
 
-import javax.money.Monetary;
 
 @Service
-public class TourGuideService {
-    private Logger logger = LoggerFactory.getLogger(TourGuideService.class);
+public class TrackerService {
+    private Logger logger = LoggerFactory.getLogger(TrackerService.class);
     private final GpsUtil gpsUtil;
     private final RewardsService rewardsService;
-    private final TripPricer tripPricer = new TripPricer();
+
     private MicroserviceRewardsProxy microserviceRewardsProxy;
     public final Tracker tracker;
     boolean testMode = true;
@@ -42,7 +38,7 @@ public class TourGuideService {
     private int proximityBuffer = defaultProximityBuffer;
     private int attractionProximityRange = 200;
 
-    public TourGuideService(GpsUtil gpsUtil, RewardsService rewardsService) {
+    public TrackerService(GpsUtil gpsUtil, RewardsService rewardsService) {
         this.gpsUtil = gpsUtil;
         this.rewardsService = rewardsService;
 
@@ -54,10 +50,6 @@ public class TourGuideService {
         }
         tracker = new Tracker(this);
         addShutDownHook();
-    }
-
-    public List<UserReward> getUserRewards(UserBean user) {
-        return user.getUserRewards();
     }
 
     public VisitedLocation getUserLocation(UserBean user) {
@@ -89,19 +81,6 @@ public class TourGuideService {
         return internalUserMap.values().stream().collect(Collectors.toList());
     }
 
-    public void addUser(UserBean user) {
-        if (!internalUserMap.containsKey(user.getUserName())) {
-            internalUserMap.put(user.getUserName(), user);
-        }
-    }
-
-    public List<Provider> getTripDeals(UserBean user) {
-        int cumulatativeRewardPoints = user.getUserRewards().stream().mapToInt(i -> i.getRewardPoints()).sum();
-        List<Provider> providers = tripPricer.getPrice(tripPricerApiKey, user.getUserId(), user.getUserPreferences().getNumberOfAdults(),
-                user.getUserPreferences().getNumberOfChildren(), user.getUserPreferences().getTripDuration(), cumulatativeRewardPoints);
-        user.setTripDeals(providers);
-        return providers;
-    }
 
     public VisitedLocation trackUserLocation(UserBean user) {
         VisitedLocation visitedLocation = gpsUtil.getUserLocation(user.getUserId());
@@ -194,16 +173,6 @@ public class TourGuideService {
         });
     }
 
-    public void setUserPreferences(String userName, Integer numberOfAdults, Integer numberOfChildren, Integer tripDuration, Integer highPricePoint, Integer lowerPricePoint) {
-        UserPreferences userPreferences = new UserPreferences();
-        userPreferences.setNumberOfAdults(numberOfAdults);
-        userPreferences.setNumberOfChildren(numberOfChildren);
-        userPreferences.setTripDuration(tripDuration);
-        userPreferences.setHighPricePoint(Money.of(highPricePoint, Monetary.getCurrency("USD")));
-        UserBean user= getUser(userName);
-        user.setUserPreferences(userPreferences);
-        internalUserMap.put(userName, user);
-    }
 
     /**********************************************************************************
      *

@@ -1,6 +1,6 @@
 package tourGuideTracker.domain;
 
-import gpsUtil.location.Location;
+import tourGuideTracker.domain.location.Location;
 
 import java.util.Date;
 import java.util.UUID;

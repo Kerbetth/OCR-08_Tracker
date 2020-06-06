@@ -11,14 +11,14 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.junit.Test;
 
 
-import gpsUtil.GpsUtil;
-import gpsUtil.location.Attraction;
-import gpsUtil.location.VisitedLocation;
 import rewardCentral.RewardCentral;
+import tourGuideTracker.domain.VisitedLocation;
+import tourGuideTracker.domain.location.Attraction;
 import tourGuideTracker.helper.InternalTestHelper;
 import tourGuideTracker.service.RewardsService;
-import tourGuideTracker.service.TourGuideService;
-import tourGuideTracker.bean.UserBean;
+import tourGuideTracker.service.TrackerService;
+import tourGuideTracker.bean.UserService.UserBean;
+import tourGuideTracker.util.GpsUtil;
 
 public class TestPerformance {
 
@@ -75,11 +75,11 @@ public class TestPerformance {
         InternalTestHelper.setInternalUserNumber(10_000);
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
-        TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
+        TrackerService trackerService = new TrackerService(gpsUtil, rewardsService);
 
         Attraction attraction = gpsUtil.getAttractions().get(0);
         List<UserBean> allUsers = new ArrayList<>();
-        allUsers = tourGuideService.getAllUsers();
+        allUsers = trackerService.getAllUsers();
         allUsers.forEach(u -> u.addToVisitedLocations(new VisitedLocation(u.getUserId(), attraction, new Date())));
 
         allUsers.forEach(u -> rewardsService.calculateRewards(u));
@@ -92,7 +92,7 @@ public class TestPerformance {
             assertTrue(user.getUserRewards().size() > 0);
         }
         stopWatch.stop();
-        tourGuideService.tracker.stopTracking();
+        trackerService.tracker.stopTracking();
 
         System.out.println("highVolumeGetRewards: Time Elapsed: " + TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()) + " seconds.");
         assertTrue(TimeUnit.MINUTES.toSeconds(20) >= TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()));

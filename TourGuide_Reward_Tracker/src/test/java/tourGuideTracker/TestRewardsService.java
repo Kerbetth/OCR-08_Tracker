@@ -15,8 +15,8 @@ import gpsUtil.location.VisitedLocation;
 import rewardCentral.RewardCentral;
 import tourGuideTracker.helper.InternalTestHelper;
 import tourGuideTracker.service.RewardsService;
-import tourGuideTracker.service.TourGuideService;
-import tourGuideTracker.bean.UserBean;
+import tourGuideTracker.service.TrackerService;
+import tourGuideTracker.bean.UserService.UserBean;
 import tourGuideTracker.user.UserReward;
 
 public class TestRewardsService {
@@ -27,14 +27,14 @@ public class TestRewardsService {
 		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
 
 		InternalTestHelper.setInternalUserNumber(0);
-		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
+		TrackerService trackerService = new TrackerService(gpsUtil, rewardsService);
 		
 		UserBean user = new UserBean(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
 		Attraction attraction = gpsUtil.getAttractions().get(0);
 		user.addToVisitedLocations(new VisitedLocation(user.getUserId(), attraction, new Date()));
-		tourGuideService.trackUserLocation(user);
+		trackerService.trackUserLocation(user);
 		List<UserReward> userRewards = user.getUserRewards();
-		tourGuideService.tracker.stopTracking();
+		trackerService.tracker.stopTracking();
 		assertTrue(userRewards.size() == 1);
 	}
 	
@@ -54,11 +54,11 @@ public class TestRewardsService {
 		rewardsService.setProximityBuffer(Integer.MAX_VALUE);
 
 		InternalTestHelper.setInternalUserNumber(1);
-		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
+		TrackerService trackerService = new TrackerService(gpsUtil, rewardsService);
 		
-		rewardsService.calculateRewards(tourGuideService.getAllUsers().get(0));
-		List<UserReward> userRewards = tourGuideService.getUserRewards(tourGuideService.getAllUsers().get(0));
-		tourGuideService.tracker.stopTracking();
+		rewardsService.calculateRewards(trackerService.getAllUsers().get(0));
+		List<UserReward> userRewards = trackerService.getUserRewards(trackerService.getAllUsers().get(0));
+		trackerService.tracker.stopTracking();
 
 		assertEquals(gpsUtil.getAttractions().size(), userRewards.size());
 	}

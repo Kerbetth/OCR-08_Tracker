@@ -1,4 +1,4 @@
-package tourGuideTracker.bean;
+package tourGuideTracker.bean.UserService;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -8,7 +8,6 @@ import java.util.UUID;
 import tourGuideTracker.domain.VisitedLocation;
 import tourGuideTracker.user.UserPreferences;
 import tourGuideTracker.user.UserReward;
-import tripPricer.Provider;
 
 public class UserBean {
 	private final UUID userId;
@@ -19,7 +18,7 @@ public class UserBean {
 	private List<VisitedLocation> visitedLocations = new ArrayList<>();
 	private List<UserReward> userRewards = new ArrayList<>();
 	private UserPreferences userPreferences = new UserPreferences();
-	private List<Provider> tripDeals = new ArrayList<>();
+	private List<ProviderBean> tripDeals = new ArrayList<>();
 	public UserBean(UUID userId, String userName, String phoneNumber, String emailAddress) {
 		this.userId = userId;
 		this.userName = userName;
@@ -91,11 +90,11 @@ public class UserBean {
 		return visitedLocations.get(visitedLocations.size() - 1);
 	}
 	
-	public void setTripDeals(List<Provider> tripDeals) {
+	public void setTripDeals(List<ProviderBean> tripDeals) {
 		this.tripDeals = tripDeals;
 	}
 	
-	public List<Provider> getTripDeals() {
+	public List<ProviderBean> getTripDeals() {
 		return tripDeals;
 	}
 

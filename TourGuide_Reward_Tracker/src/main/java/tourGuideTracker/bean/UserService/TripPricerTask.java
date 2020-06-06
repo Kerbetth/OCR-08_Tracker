@@ -1,4 +1,4 @@
-package tourGuideTracker.TripPricer;
+package tourGuideTracker.bean.UserService;
 
 import tripPricer.Provider;
 import tripPricer.TripPricer;
