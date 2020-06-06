@@ -14,11 +14,10 @@ import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
 import tourGuideTracker.domain.VisitedLocation;
 import tourGuideTracker.domain.location.Attraction;
-import tourGuideTracker.repositorie.proxy.ServiceUserProxy;
-import tourGuideTracker.service.RewardsService;
+import tourGuideTracker.repository.proxy.ServiceUserProxy;
 import tourGuideTracker.service.TrackerService;
 import tourGuideTracker.bean.UserService.UserBean;
-import tourGuideTracker.repositorie.GpsUtil;
+import tourGuideTracker.repository.GpsUtil;
 
 public class TestPerformance {
 
@@ -56,7 +55,6 @@ public class TestPerformance {
     @Test
     public void highVolumeTrackLocation() {
 
-
         // Users should be incremented up to 100,000, and test finishes within 15 minutes
         trackerService.setInternalUserNumber(100);
 
@@ -74,37 +72,4 @@ public class TestPerformance {
         System.out.println("highVolumeTrackLocation: Time Elapsed: " + TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()) + " seconds.");
         assertTrue(TimeUnit.MINUTES.toSeconds(15) >= TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()));
     }
-
-
-    @Test
-    public void highVolumeGetRewards() {
-        RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
-
-        // Users should be incremented up to 100,000, and test finishes within 20 minutes
-        trackerService.setInternalUserNumber(10_000);
-        StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
-        TrackerService trackerService = new TrackerService(gpsUtil);
-
-        Attraction attraction = gpsUtil.getAttractions().get(0);
-        List<UserBean> allUsers = new ArrayList<>();
-        allUsers = serviceUserProxy.getAllUsers();
-        allUsers.forEach(u -> u.addToVisitedLocations(new VisitedLocation(u.getUserId(), attraction, new Date())));
-
-        allUsers.forEach(u -> rewardsService.calculateRewards(u));
-        for (UserBean user : allUsers) {
-            user.addToVisitedLocations(new VisitedLocation(user.getUserId(), attraction, new Date()));
-            rewardsService.calculateRewards(user);
-        }
-
-        for (UserBean user : allUsers) {
-            assertTrue(user.getUserRewards().size() > 0);
-        }
-        stopWatch.stop();
-        trackerService.tracker.stopTracking();
-
-        System.out.println("highVolumeGetRewards: Time Elapsed: " + TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()) + " seconds.");
-        assertTrue(TimeUnit.MINUTES.toSeconds(20) >= TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()));
-    }
-
 }

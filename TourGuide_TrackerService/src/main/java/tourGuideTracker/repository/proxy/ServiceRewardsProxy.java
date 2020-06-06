@@ -1,4 +1,4 @@
-package tourGuideTracker.repositorie.proxy;
+package tourGuideTracker.repository.proxy;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Repository;
