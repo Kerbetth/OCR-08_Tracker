@@ -40,7 +40,7 @@ public class TrackerController {
     // The reward points for visiting each Attraction.
     //    Note: Attraction reward points can be gathered from RewardsCentral
     @RequestMapping("/getNearbyAttractions")
-    public FiveNearestAttractions getNearbyAttractions(@RequestParam String userName) {
+    public FiveNearestAttractions get5NearestAttractions(@RequestParam String userName) {
         VisitedLocation visitedLocation = trackerService.getUserLocation(userName);
         return trackerService.get5NearestAttractions(visitedLocation);
     }
