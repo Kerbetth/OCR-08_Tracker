@@ -5,10 +5,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.lang3.time.StopWatch;
+
+import org.apache.commons.lang.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import tourGuideTracker.repository.proxy.ServiceUserProxy;
 import tourGuideTracker.service.TrackerService;
 import tourGuideTracker.bean.UserService.UserBean;
 
@@ -18,6 +21,9 @@ public class Tracker extends Thread {
 	private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 	private final TrackerService trackerService;
 	private boolean stop = false;
+
+	@Autowired
+	ServiceUserProxy serviceUserProxy;
 
 	public Tracker(TrackerService trackerService) {
 		this.trackerService = trackerService;
@@ -42,7 +48,7 @@ public class Tracker extends Thread {
 				break;
 			}
 			
-			List<UserBean> users = trackerService.getAllUsers();
+			List<UserBean> users = serviceUserProxy.getAllUsers();
 			logger.debug("Begin Tracker. Tracking " + users.size() + " users.");
 			stopWatch.start();
 			users.forEach(u -> trackerService.trackUserLocation(u));

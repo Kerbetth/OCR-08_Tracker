@@ -1,13 +1,10 @@
 package tourGuideTracker.bean.UserService;
 
-import tripPricer.Provider;
-import tripPricer.TripPricer;
-
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 
-public class TripPricerTask implements Callable<List<Provider>> {
+public class TripPricerTask implements Callable<List<ProviderBean>> {
     private final UUID attractionId;
     private final String apiKey;
     private final int adults;
@@ -22,7 +19,7 @@ public class TripPricerTask implements Callable<List<Provider>> {
         this.nightsStay = nightsStay;
     }
 
-    public List<Provider> call() throws Exception {
-        return (new TripPricer()).getPrice(this.apiKey, this.attractionId, this.adults, this.children, this.nightsStay, 5);
+    public List<ProviderBean> call() throws Exception {
+        return (new TripPricerBean()).getPrice(this.apiKey, this.attractionId, this.adults, this.children, this.nightsStay, 5);
     }
 }

@@ -10,13 +10,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import tourGuideTracker.domain.UserLocation;
 import tourGuideTracker.repository.proxy.ServiceUserProxy;
 import tourGuideTracker.repository.GpsUtil;
 import tourGuideTracker.domain.location.Attraction;
 import tourGuideTracker.domain.location.Location;
 import tourGuideTracker.domain.VisitedLocation;
 import tourGuideTracker.domain.FiveNearestAttractions;
-import tourGuideTracker.domain.UserLocation;
 import tourGuideTracker.repository.proxy.ServiceRewardsProxy;
 import tourGuideTracker.tracker.Tracker;
 import tourGuideTracker.bean.UserService.UserBean;
@@ -66,9 +66,9 @@ public class TrackerService {
     public List<UserLocation> getLocationOfAllUsers() {
         List<UserLocation> userLocations = new ArrayList<>();
         for (UserBean user : serviceUserProxy.getAllUsers()) {
-            UserLocation userLocation = new UserLocation();
-            userLocation.setUserID(user.getUserId());
-            userLocation.setLatLongUser((user.getVisitedLocations().size() > 0) ?
+            UserLocation userLocation = new UserLocation(
+                    user.getUserId(),
+                    (user.getVisitedLocations().size() > 0) ?
                     user.getLastVisitedLocation().location :
                     null);
             userLocations.add(userLocation);
