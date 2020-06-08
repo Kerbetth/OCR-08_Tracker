@@ -41,7 +41,7 @@ public class TrackerServiceTest {
     @Mock
     private ServiceUserProxy serviceUserProxy;
 
-    private DataTest dataTest = new DataTest();
+    private final DataTest dataTest = new DataTest();
     private ArrayList<UserBean> userBeans;
 
     @InjectMocks
@@ -59,6 +59,7 @@ public class TrackerServiceTest {
         when(serviceUserProxy.getAllUsers()).thenReturn(userBeans);
         when(serviceRewardsProxy.getRewards(any(), any())).thenReturn(1);
         when(gpsUtil.getAttractions()).thenReturn(dataTest.getAttractionsForTest());
+        when(gpsUtil.getUserLocation(any())).thenReturn(user.getLastVisitedLocation());
 
     }
 
@@ -125,5 +126,12 @@ public class TrackerServiceTest {
         assertFalse(isNear2);
     }
 
+    @Test
+    public void trackUserLocationShouldReturnLastVisitedLocation() {
+        //ACT
+        VisitedLocation visitedLocation = trackerService.trackUserLocation(userBeans.get(0));
 
+        //ASSERT
+        assertThat(visitedLocation).isEqualTo(userBeans.get(0).getLastVisitedLocation());
+    }
 }
