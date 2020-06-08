@@ -120,7 +120,7 @@ public class TrackerService {
         return statuteMiles;
     }
 
-    private boolean nearAttraction(Location visitedLocation, Attraction attraction) {
+    public boolean isNearAttraction(Location visitedLocation, Attraction attraction) {
         if (Math.abs(attraction.longitude - visitedLocation.longitude) < proximityBuffer) {
             if (Math.abs(attraction.latitude - visitedLocation.latitude) < proximityBuffer) {
                 return getDistance(attraction, visitedLocation) > proximityBuffer ? false : true;
@@ -129,12 +129,6 @@ public class TrackerService {
         return false;
     }
 
-
-    public List<Attraction> pertinenteAttractions(UserBean user) {
-        List<Attraction> pertinentAttractions = new ArrayList<>();
-
-        return pertinentAttractions;
-    }
 
     public List<Attraction> getNearByAttractions(VisitedLocation visitedLocation) {
         List<Attraction> nearbyAttractions = new ArrayList<>();

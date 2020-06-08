@@ -11,6 +11,7 @@ import tourGuideTracker.bean.UserService.UserBean;
 import tourGuideTracker.domain.FiveNearestAttractions;
 import tourGuideTracker.domain.UserLocation;
 import tourGuideTracker.domain.VisitedLocation;
+import tourGuideTracker.domain.location.Attraction;
 import tourGuideTracker.domain.location.Location;
 import tourGuideTracker.repository.GpsUtil;
 import tourGuideTracker.repository.proxy.ServiceRewardsProxy;
@@ -24,6 +25,8 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -92,6 +95,34 @@ public class TrackerServiceTest {
         assertThat(fiveNearestAttractions.getLatLongAttraction()).hasSize(5);
         assertThat(fiveNearestAttractions.getLatLongUser()).isEqualTo(location);
         assertThat(fiveNearestAttractions.getAttractionRewardPoints()).isEqualTo(5L);
+    }
+
+    @Test
+    public void getDistanceShouldReturnGoodValue() {
+        double STATUTE_MILES_PER_NAUTICAL_MILE = 1.15077945;
+        Location location1 = new Location(0.0, 0.0);
+        Location location2 = new Location(3.0, 4.0);
+
+        //ACT
+        double distance = trackerService.getDistance(location1, location2);
+
+        //ASSERT
+        assertThat(distance).isEqualTo(299.9122127962214*STATUTE_MILES_PER_NAUTICAL_MILE);
+    }
+
+    @Test
+    public void isNearAttractionShouldReturnTrueIfLessThan5Miles() {
+        Location location = new Location(33.81, -117.92);
+        Location location2 = new Location(33, -117);
+        Attraction attraction = dataTest.getAttractionsForTest().get(0);
+
+        //ACT
+        boolean isNear = trackerService.isNearAttraction(location, attraction);
+        boolean isNear2 = trackerService.isNearAttraction(location2, attraction);
+
+        //ASSERT
+        assertTrue(isNear);
+        assertFalse(isNear2);
     }
 
 
