@@ -41,14 +41,13 @@ public class TestPerformance {
      *          assertTrue(TimeUnit.MINUTES.toSeconds(20) >= TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()));
      */
     TrackerService trackerService;
-    GpsUtil gpsUtil;
+    DataTest dataTest = new DataTest();
     ServiceUserProxy serviceUserProxy;
 
 
     @BeforeEach
     void before() {
-        gpsUtil = new GpsUtil();
-        trackerService = new TrackerService(gpsUtil);
+
     }
 
 
@@ -56,7 +55,7 @@ public class TestPerformance {
     public void highVolumeTrackLocation() {
 
         // Users should be incremented up to 100,000, and test finishes within 15 minutes
-        trackerService.setInternalUserNumber(100);
+        dataTest.setInternalUserNumber(100);
 
         List<UserBean> allUsers = new ArrayList<>();
         allUsers = serviceUserProxy.getAllUsers();

@@ -27,29 +27,20 @@ import tourGuideTracker.bean.UserService.UserBean;
 public class TrackerService {
 
     @Autowired
-    private final GpsUtil gpsUtil;
+    private GpsUtil gpsUtil;
     @Autowired
     private ServiceRewardsProxy serviceRewardsProxy;
     @Autowired
     private ServiceUserProxy serviceUserProxy;
 
     public final Tracker tracker;
-    boolean testMode = true;
 
     private static final double STATUTE_MILES_PER_NAUTICAL_MILE = 1.15077945;
     private int proximityBuffer = 10;
     private int attractionProximityRange = 200;
 
 
-    public TrackerService(GpsUtil gpsUtil) {
-        this.gpsUtil = gpsUtil;
-
-        if (testMode) {
-            log.info("TestMode enabled");
-            log.debug("Initializing users");
-            initializeInternalUsers();
-            log.debug("Finished initializing users");
-        }
+    public TrackerService() {
         tracker = new Tracker(this);
         addShutDownHook();
     }
@@ -166,58 +157,6 @@ public class TrackerService {
                 tracker.stopTracking();
             }
         });
-    }
-
-
-    /**********************************************************************************
-     *
-     * Methods Below: For Internal Testing
-     *
-     **********************************************************************************/
-    private static int internalUserNumber = 100;
-
-    public static void setInternalUserNumber(int internalUserNumber) {
-        internalUserNumber = internalUserNumber;
-    }
-
-    private static final String tripPricerApiKey = "test-server-api-key";
-    // Database connection will be used for external users, but for testing purposes internal users are provided and stored in memory
-    private final Map<String, UserBean> internalUserMap = new HashMap<>();
-
-    private void initializeInternalUsers() {
-        IntStream.range(0, internalUserNumber).forEach(i -> {
-            String userName = "internalUser" + i;
-            String phone = "000";
-            String email = userName + "@tourGuide.com";
-            UserBean user = new UserBean(UUID.randomUUID(), userName, phone, email);
-            generateUserLocationHistory(user);
-
-            internalUserMap.put(userName, user);
-        });
-        log.debug("Created " + internalUserNumber + " internal test users.");
-    }
-
-    private void generateUserLocationHistory(UserBean user) {
-        IntStream.range(0, 3).forEach(i -> {
-            user.addToVisitedLocations(new VisitedLocation(user.getUserId(), new Location(generateRandomLatitude(), generateRandomLongitude()), getRandomTime()));
-        });
-    }
-
-    private double generateRandomLongitude() {
-        double leftLimit = -180;
-        double rightLimit = 180;
-        return leftLimit + new Random().nextDouble() * (rightLimit - leftLimit);
-    }
-
-    private double generateRandomLatitude() {
-        double leftLimit = -85.05112878;
-        double rightLimit = 85.05112878;
-        return leftLimit + new Random().nextDouble() * (rightLimit - leftLimit);
-    }
-
-    private Date getRandomTime() {
-        LocalDateTime localDateTime = LocalDateTime.now().minusDays(new Random().nextInt(30));
-        return Date.from(localDateTime.toInstant(ZoneOffset.UTC));
     }
 
 }
