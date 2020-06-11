@@ -43,6 +43,9 @@ dependencies {
     compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '2.1.2.RELEASE'
     compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.30'
     compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.9'
+    compile group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.5.0'
+    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.12'
+    compile group: 'org.json', name: 'json', version: '20190722'
 
     compile group: 'org.projectlombok', name: 'lombok', version: '1.18.12'
     compileOnly 'org.projectlombok:lombok'

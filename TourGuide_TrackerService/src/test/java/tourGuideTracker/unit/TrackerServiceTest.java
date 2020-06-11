@@ -7,15 +7,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import tourGuideTracker.DataTest;
-import tourGuideTracker.bean.UserService.UserBean;
+import tourGuideTracker.clients.dto.UserService.UserBean;
 import tourGuideTracker.domain.FiveNearestAttractions;
 import tourGuideTracker.domain.UserLocation;
 import tourGuideTracker.domain.VisitedLocation;
 import tourGuideTracker.domain.location.Attraction;
 import tourGuideTracker.domain.location.Location;
 import tourGuideTracker.repository.GpsUtil;
-import tourGuideTracker.repository.proxy.ServiceRewardsProxy;
-import tourGuideTracker.repository.proxy.ServiceUserProxy;
+import tourGuideTracker.clients.ServiceRewardsProxy;
+import tourGuideTracker.clients.ServiceUserProxy;
 import tourGuideTracker.service.TrackerService;
 
 

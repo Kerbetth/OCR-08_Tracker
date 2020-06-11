@@ -1,9 +1,6 @@
 package tourGuideTracker.service;
 
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.*;
-import java.util.stream.IntStream;
 
 
 import lombok.extern.slf4j.Slf4j;
@@ -11,15 +8,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import tourGuideTracker.domain.UserLocation;
-import tourGuideTracker.repository.proxy.ServiceUserProxy;
+import tourGuideTracker.clients.ServiceUserProxy;
 import tourGuideTracker.repository.GpsUtil;
 import tourGuideTracker.domain.location.Attraction;
 import tourGuideTracker.domain.location.Location;
 import tourGuideTracker.domain.VisitedLocation;
 import tourGuideTracker.domain.FiveNearestAttractions;
-import tourGuideTracker.repository.proxy.ServiceRewardsProxy;
+import tourGuideTracker.clients.ServiceRewardsProxy;
 import tourGuideTracker.tracker.Tracker;
-import tourGuideTracker.bean.UserService.UserBean;
+import tourGuideTracker.clients.dto.UserService.UserBean;
 
 
 @Service

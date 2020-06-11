@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/tourGuideTracker.iml" filepath="$PROJECT_DIR$/.idea/modules/tourGuideTracker.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/tourGuideTracker.main.iml" filepath="$PROJECT_DIR$/.idea/modules/tourGuideTracker.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/tourGuideTracker.test.iml" filepath="$PROJECT_DIR$/.idea/modules/tourGuideTracker.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/tourGuideTracker/tourGuideTracker.tourGuideTracker.iml" filepath="$PROJECT_DIR$/.idea/modules/tourGuideTracker/tourGuideTracker.tourGuideTracker.iml" />
+    </modules>
+  </component>
+</project>

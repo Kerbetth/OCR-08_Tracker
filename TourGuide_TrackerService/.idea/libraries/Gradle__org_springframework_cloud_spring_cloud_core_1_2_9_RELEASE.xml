@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: org.springframework.cloud:spring-cloud-core:1.2.9.RELEASE">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.cloud/spring-cloud-core/1.2.9.RELEASE/9039917bd141d31636230c5a36d08353bd894e00/spring-cloud-core-1.2.9.RELEASE.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.cloud/spring-cloud-core/1.2.9.RELEASE/4437262d2180dca8b26615967c92dee4cce5e7c2/spring-cloud-core-1.2.9.RELEASE-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -3,7 +3,6 @@ package tourGuideTracker;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -12,12 +11,9 @@ import org.junit.Test;
 
 
 import org.junit.jupiter.api.BeforeEach;
-import tourGuideTracker.domain.VisitedLocation;
-import tourGuideTracker.domain.location.Attraction;
-import tourGuideTracker.repository.proxy.ServiceUserProxy;
+import tourGuideTracker.clients.ServiceUserProxy;
 import tourGuideTracker.service.TrackerService;
-import tourGuideTracker.bean.UserService.UserBean;
-import tourGuideTracker.repository.GpsUtil;
+import tourGuideTracker.clients.dto.UserService.UserBean;
 
 public class TestPerformance {
 

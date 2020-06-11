@@ -1,7 +1,7 @@
 package tourGuideTracker;
 
 import lombok.extern.slf4j.Slf4j;
-import tourGuideTracker.bean.UserService.UserBean;
+import tourGuideTracker.clients.dto.UserService.UserBean;
 import tourGuideTracker.domain.VisitedLocation;
 import tourGuideTracker.domain.location.Attraction;
 import tourGuideTracker.domain.location.Location;
@@ -16,6 +16,7 @@ public class DataTest {
 
     private static int internalUserNumber = 100;
     private static final String tripPricerApiKey = "test-server-api-key";
+
     private final Map<String, UserBean> internalUserMap = new HashMap<>();
 
     public static void setInternalUserNumber(int internalUserNumber) {
