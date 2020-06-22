@@ -35,8 +35,7 @@ public class TrackerService {
     }
 
 
-
-    public Map<UUID, Location> getLocationOfAllUsers(List<UUID> userIds) {
+    public Map<UUID, Location> getCurrentLocationOfAllUsers(List<UUID> userIds) {
         Map<UUID, Location> userLocations = new HashMap<>();
         for (UUID userId : userIds) {
             Location userLocation = trackUserLocation(userId).location;
@@ -45,9 +44,16 @@ public class TrackerService {
         return userLocations;
     }
 
-
     public VisitedLocation trackUserLocation(UUID userId) {
         return gpsUtil.getUserLocation(userId);
+    }
+
+    public Set<Attraction> getAllVisitedAttraction(List<VisitedLocation> visitedLocations) {
+        Set<Attraction> attractions =new HashSet<>();
+        for(VisitedLocation visitedLocation :visitedLocations) {
+            attractions.addAll(getNearByAttractions(visitedLocation));
+        }
+        return attractions;
     }
 
     public FiveNearestAttractions get5NearestAttractions(Location location) {
@@ -96,12 +102,7 @@ public class TrackerService {
     }
 
     public boolean isNearAttraction(Location visitedLocation, Attraction attraction) {
-        if (Math.abs(attraction.longitude - visitedLocation.longitude) < proximityBuffer) {
-            if (Math.abs(attraction.latitude - visitedLocation.latitude) < proximityBuffer) {
-                return getDistance(attraction, visitedLocation) > proximityBuffer ? false : true;
-            }
-        }
-        return false;
+        return getDistance(attraction, visitedLocation) > proximityBuffer ? false : true;
     }
 
 
