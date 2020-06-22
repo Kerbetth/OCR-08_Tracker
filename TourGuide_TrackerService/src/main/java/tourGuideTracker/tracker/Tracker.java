@@ -6,14 +6,14 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 
-import org.apache.commons.lang.time.StopWatch;
+import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import tourGuideTracker.clients.ServiceUserProxy;
 import tourGuideTracker.service.TrackerService;
-import tourGuideTracker.clients.dto.UserService.UserBean;
+import tourGuideTracker.clients.dto.UserService.User;
 
 public class Tracker extends Thread {
 	private Logger logger = LoggerFactory.getLogger(Tracker.class);
@@ -48,7 +48,7 @@ public class Tracker extends Thread {
 				break;
 			}
 			
-			List<UserBean> users = serviceUserProxy.getAllUsers();
+			List<User> users = serviceUserProxy.getAllUsers();
 			logger.debug("Begin Tracker. Tracking " + users.size() + " users.");
 			stopWatch.start();
 			users.forEach(u -> trackerService.trackUserLocation(u));

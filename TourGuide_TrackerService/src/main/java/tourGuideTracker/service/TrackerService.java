@@ -7,16 +7,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import tourGuideTracker.domain.UserLocation;
-import tourGuideTracker.clients.ServiceUserProxy;
 import tourGuideTracker.repository.GpsUtil;
 import tourGuideTracker.domain.location.Attraction;
 import tourGuideTracker.domain.location.Location;
 import tourGuideTracker.domain.VisitedLocation;
 import tourGuideTracker.domain.FiveNearestAttractions;
-import tourGuideTracker.clients.ServiceRewardsProxy;
 import tourGuideTracker.tracker.Tracker;
-import tourGuideTracker.clients.dto.UserService.UserBean;
 
 
 @Service
@@ -25,10 +21,6 @@ public class TrackerService {
 
     @Autowired
     private GpsUtil gpsUtil;
-    @Autowired
-    private ServiceRewardsProxy serviceRewardsProxy;
-    @Autowired
-    private ServiceUserProxy serviceUserProxy;
 
     public final Tracker tracker;
 
@@ -42,37 +34,23 @@ public class TrackerService {
         addShutDownHook();
     }
 
-    public VisitedLocation getUserLocation(String userName) {
-        UserBean user = serviceUserProxy.getUser(userName);
-        VisitedLocation visitedLocation = (user.getVisitedLocations().size() > 0) ?
-                user.getLastVisitedLocation() :
-                trackUserLocation(user);
-        return visitedLocation;
-    }
 
 
-    public List<UserLocation> getLocationOfAllUsers() {
-        List<UserLocation> userLocations = new ArrayList<>();
-        for (UserBean user : serviceUserProxy.getAllUsers()) {
-            UserLocation userLocation = new UserLocation(
-                    user.getUserId(),
-                    (user.getVisitedLocations().size() > 0) ?
-                    user.getLastVisitedLocation().location :
-                    null);
-            userLocations.add(userLocation);
+    public Map<UUID, Location> getLocationOfAllUsers(List<UUID> userIds) {
+        Map<UUID, Location> userLocations = new HashMap<>();
+        for (UUID userId : userIds) {
+            Location userLocation = trackUserLocation(userId).location;
+            userLocations.put(userId, userLocation);
         }
         return userLocations;
     }
 
 
-    public VisitedLocation trackUserLocation(UserBean user) {
-        VisitedLocation visitedLocation = gpsUtil.getUserLocation(user.getUserId());
-        user.addToVisitedLocations(visitedLocation);
-        serviceRewardsProxy.calculateRewards(user);
-        return visitedLocation;
+    public VisitedLocation trackUserLocation(UUID userId) {
+        return gpsUtil.getUserLocation(userId);
     }
 
-    public FiveNearestAttractions get5NearestAttractions(VisitedLocation visitedLocation) {
+    public FiveNearestAttractions get5NearestAttractions(Location location) {
         Map<Double, Attraction> attractionsByDistance = new TreeMap<>();
         FiveNearestAttractions fiveNearestAttractions = new FiveNearestAttractions();
         List<String> attractionsName = new ArrayList<>();
@@ -81,19 +59,19 @@ public class TrackerService {
         List<Integer> attractionsRewardPoints = new ArrayList<>();
         int gatheredReward = 0;
         for (Attraction attraction : gpsUtil.getAttractions()) {
-            attractionsByDistance.put(getDistance(attraction, visitedLocation.location), attraction);
+            attractionsByDistance.put(getDistance(attraction, location), attraction);
         }
 
         attractionsByDistance.forEach((distance, attraction) -> {
             if (attractionsName.size() < 5) {
                 attractionsName.add(attraction.attractionName);
                 attractionsLocation.add(new Location(attraction.longitude, attraction.latitude));
-                attractionsDistance.add(getDistance(attraction, visitedLocation.location));
-                attractionsRewardPoints.add(serviceRewardsProxy.getRewards(attraction.attractionId, visitedLocation.userId));
+                attractionsDistance.add(getDistance(attraction, location));
+                //attractionsRewardPoints.add(serviceRewardsProxy.getRewards(attraction.attractionId, visitedLocation.userId));
             }
         });
         fiveNearestAttractions.setAttractionName(attractionsName);
-        fiveNearestAttractions.setLatLongUser(visitedLocation.location);
+        fiveNearestAttractions.setLatLongUser(location);
         fiveNearestAttractions.setLatLongAttraction(attractionsLocation);
         fiveNearestAttractions.setDistance(attractionsDistance);
         for (Integer rewardPoints : attractionsRewardPoints) {

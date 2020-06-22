@@ -1,16 +1,21 @@
 package tourGuideTracker.controller;
 
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
 import tourGuideTracker.domain.FiveNearestAttractions;
+import tourGuideTracker.domain.User;
 import tourGuideTracker.domain.UserLocation;
 import tourGuideTracker.domain.VisitedLocation;
+import tourGuideTracker.domain.location.Location;
 import tourGuideTracker.service.TrackerService;
 
 @RestController
@@ -25,9 +30,8 @@ public class TrackerController {
     }
 
     @RequestMapping("/getLocation")
-    public VisitedLocation getLocation(@RequestParam String userName) {
-        VisitedLocation visitedLocation = trackerService.getUserLocation(userName);
-        return visitedLocation;
+    public VisitedLocation getLocation(@RequestParam UUID userId) {
+        return trackerService.trackUserLocation(userId);
     }
 
     //  TODO: Change this method to no longer return a List of Attractions.
@@ -39,14 +43,13 @@ public class TrackerController {
     // The distance in miles between the user's location and each of the attractions.
     // The reward points for visiting each Attraction.
     //    Note: Attraction reward points can be gathered from RewardsCentral
-    @RequestMapping("/getNearbyAttractions")
-    public FiveNearestAttractions get5NearestAttractions(@RequestParam String userName) {
-        VisitedLocation visitedLocation = trackerService.getUserLocation(userName);
-        return trackerService.get5NearestAttractions(visitedLocation);
+    @RequestMapping("/getFiveNearbyAttractions")
+    public FiveNearestAttractions get5NearestAttractions(@RequestParam Location location) {
+        return trackerService.get5NearestAttractions(location);
     }
 
     @RequestMapping("/getAllCurrentLocations")
-    public List<UserLocation> getAllCurrentLocations() {
+    public Map<UUID, Location> getAllCurrentLocations() {
         // TODO: Get a list of every user's most recent location as JSON
         //- Note: does not use gpsUtil to query for their current location,
         //        but rather gathers the user's current location from their stored location history.

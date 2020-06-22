@@ -7,7 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import tourGuideTracker.DataTest;
-import tourGuideTracker.clients.dto.UserService.UserBean;
+import tourGuideTracker.clients.dto.UserService.User;
 import tourGuideTracker.domain.FiveNearestAttractions;
 import tourGuideTracker.domain.UserLocation;
 import tourGuideTracker.domain.VisitedLocation;
@@ -42,21 +42,21 @@ public class TrackerServiceTest {
     private ServiceUserProxy serviceUserProxy;
 
     private final DataTest dataTest = new DataTest();
-    private ArrayList<UserBean> userBeans;
+    private ArrayList<User> users;
 
     @InjectMocks
     TrackerService trackerService = new TrackerService();
 
     @BeforeEach
     void setup() {
-        userBeans = new ArrayList<>();
-        UserBean user = new UserBean(UUID.randomUUID(), "user1", "000-555-444", "user1@mail.com");
-        UserBean user2 = new UserBean(UUID.randomUUID(), "user2", "000-666-444", "user2@mail.com");
+        users = new ArrayList<>();
+        User user = new User(UUID.randomUUID(), "user1", "000-555-444", "user1@mail.com");
+        User user2 = new User(UUID.randomUUID(), "user2", "000-666-444", "user2@mail.com");
         user.addToVisitedLocations(new VisitedLocation(UUID.randomUUID(), new Location(1.0, 2.0), new Date()));
-        userBeans.add(user);
-        userBeans.add(user2);
+        users.add(user);
+        users.add(user2);
         when(serviceUserProxy.getUser(anyString())).thenReturn(user);
-        when(serviceUserProxy.getAllUsers()).thenReturn(userBeans);
+        when(serviceUserProxy.getAllUsers()).thenReturn(users);
         when(serviceRewardsProxy.getRewards(any(), any())).thenReturn(1);
         when(gpsUtil.getAttractions()).thenReturn(dataTest.getAttractionsForTest());
         when(gpsUtil.getUserLocation(any())).thenReturn(user.getLastVisitedLocation());
@@ -66,7 +66,7 @@ public class TrackerServiceTest {
     @Test
     public void getLocationShouldReturnGoodVisitedLocation() {
         //ACT
-        VisitedLocation visitedLocation = trackerService.getUserLocation(userBeans.get(0).getUserName());
+        VisitedLocation visitedLocation = trackerService.getUserLocation(users.get(0).getUserName());
 
         //ASSERT
         assertThat(visitedLocation.location.latitude).isEqualTo(1.0);
@@ -129,9 +129,9 @@ public class TrackerServiceTest {
     @Test
     public void trackUserLocationShouldReturnLastVisitedLocation() {
         //ACT
-        VisitedLocation visitedLocation = trackerService.trackUserLocation(userBeans.get(0));
+        VisitedLocation visitedLocation = trackerService.trackUserLocation(users.get(0));
 
         //ASSERT
-        assertThat(visitedLocation).isEqualTo(userBeans.get(0).getLastVisitedLocation());
+        assertThat(visitedLocation).isEqualTo(users.get(0).getLastVisitedLocation());
     }
 }

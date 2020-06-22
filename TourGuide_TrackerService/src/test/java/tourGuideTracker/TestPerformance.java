@@ -13,7 +13,7 @@ import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
 import tourGuideTracker.clients.ServiceUserProxy;
 import tourGuideTracker.service.TrackerService;
-import tourGuideTracker.clients.dto.UserService.UserBean;
+import tourGuideTracker.clients.dto.UserService.User;
 
 public class TestPerformance {
 
@@ -53,12 +53,12 @@ public class TestPerformance {
         // Users should be incremented up to 100,000, and test finishes within 15 minutes
         dataTest.setInternalUserNumber(100);
 
-        List<UserBean> allUsers = new ArrayList<>();
+        List<User> allUsers = new ArrayList<>();
         allUsers = serviceUserProxy.getAllUsers();
 
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
-        for (UserBean user : allUsers) {
+        for (User user : allUsers) {
             trackerService.trackUserLocation(user);
         }
         stopWatch.stop();

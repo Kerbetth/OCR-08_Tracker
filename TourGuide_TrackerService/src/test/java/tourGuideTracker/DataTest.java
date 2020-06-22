@@ -1,7 +1,7 @@
 package tourGuideTracker;
 
 import lombok.extern.slf4j.Slf4j;
-import tourGuideTracker.clients.dto.UserService.UserBean;
+import tourGuideTracker.clients.dto.UserService.User;
 import tourGuideTracker.domain.VisitedLocation;
 import tourGuideTracker.domain.location.Attraction;
 import tourGuideTracker.domain.location.Location;
@@ -17,7 +17,7 @@ public class DataTest {
     private static int internalUserNumber = 100;
     private static final String tripPricerApiKey = "test-server-api-key";
 
-    private final Map<String, UserBean> internalUserMap = new HashMap<>();
+    private final Map<String, User> internalUserMap = new HashMap<>();
 
     public static void setInternalUserNumber(int internalUserNumber) {
         internalUserNumber = internalUserNumber;
@@ -58,7 +58,7 @@ public class DataTest {
 
 
 
-    private void generateUserLocationHistory(UserBean user) {
+    private void generateUserLocationHistory(User user) {
         IntStream.range(0, 3).forEach(i -> {
             user.addToVisitedLocations(new VisitedLocation(user.getUserId(), new Location(generateRandomLatitude(), generateRandomLongitude()), getRandomTime()));
         });
@@ -86,7 +86,7 @@ public class DataTest {
             String userName = "internalUser" + i;
             String phone = "000";
             String email = userName + "@tourGuide.com";
-            UserBean user = new UserBean(UUID.randomUUID(), userName, phone, email);
+            User user = new User(UUID.randomUUID(), userName, phone, email);
             generateUserLocationHistory(user);
 
             internalUserMap.put(userName, user);
