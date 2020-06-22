@@ -1,70 +1,93 @@
 package tourGuideTracker.service;
 
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.stereotype.Service;
+import tourGuideTracker.domain.Provider;
+import tourGuideTracker.domain.TripPricerTask;
+import tourGuideTracker.domain.UserReward;
 
-import gpsUtil.GpsUtil;
-import gpsUtil.location.Attraction;
-import gpsUtil.location.VisitedLocation;
-import rewardCentral.RewardCentral;
-import tourGuideTracker.bean.UserService.UserBean;
-import tourGuideTracker.user.UserReward;
-import tripPricer.Provider;
 
 @Service
 public class RewardsService {
 
-    private final RewardCentral rewardsCentral;
+    private static final String tripPricerApiKey = "test-server-api-key";
 
-    public RewardsService(GpsUtil gpsUtil, RewardCentral rewardCentral) {
-        this.gpsUtil = gpsUtil;
-        this.rewardsCentral = rewardCentral;
-    }
-
-    public void setProximityBuffer(int proximityBuffer) {
-        this.proximityBuffer = proximityBuffer;
-    }
-
-    public void setDefaultProximityBuffer() {
-        proximityBuffer = defaultProximityBuffer;
-    }
-
-    public void calculateRewards(UserBean user) {
-        CopyOnWriteArrayList<Attraction> attractions = new CopyOnWriteArrayList<>() ;
-        CopyOnWriteArrayList<VisitedLocation> userLocations = new CopyOnWriteArrayList<>();
-        attractions.addAll(gpsUtil.getAttractions());
-        userLocations.addAll(user.getVisitedLocations());
-
-        userLocations
-                .stream()
-                .forEach(visitedLocation -> attractions
-                        .stream()
-                        .filter(attraction -> nearAttraction(visitedLocation.location, attraction))
-                        .forEach(attraction -> {
-                            if (user.getUserRewards().stream().filter(r -> r.attraction.attractionName.equals(attraction.attractionName)).count() == 0) {
-                                user.addUserReward(new UserReward(visitedLocation, attraction, getRewardPoints(attraction, user)));
-                            }
-                        }));
-
-    }
-
-    public List<Provider> getTripDeals(UserBean user) {
-        int cumulatativeRewardPoints = user.getUserRewards().stream().mapToInt(i -> i.getRewardPoints()).sum();
-        List<Provider> providers = tripPricer.getPrice(tripPricerApiKey, user.getUserId(), user.getUserPreferences().getNumberOfAdults(),
-                user.getUserPreferences().getNumberOfChildren(), user.getUserPreferences().getTripDuration(), cumulatativeRewardPoints);
-        user.setTripDeals(providers);
+    public List<Provider> getTripDeals(TripPricerTask tripPricerTask, double cumulatativeRewardPoints) {
+        List<Provider> providers = getPrice(tripPricerTask, cumulatativeRewardPoints);
         return providers;
     }
-    private int getRewardPoints(Attraction attraction, UserBean user) {
-        //rewardsCentral.getAttractionRewardPoints(attraction.attractionId, user.getUserId());
+
+
+    public Integer cumulatativeRewardPoints(List<UserReward> userRewards){
+        return userRewards.stream().mapToInt(i -> i.getRewardPoints()).sum();
+    }
+
+    public Integer calculateRewards(Set<UUID> attractionsId, UUID userId) {
+        Integer allpoints = 0;
+        for (UUID attraction : attractionsId) {
+            allpoints += getAttractionRewardPoints(attraction, userId);
+        }
+        return allpoints;
+    }
+
+    private int getAttractionRewardPoints(UUID attraction, UUID userId) {
+        //TODO this method need to be completed in order to get a coherent amount of rewardPoint
         return ThreadLocalRandom.current().nextInt(1, 1000);
     }
 
 
+    public List<Provider> getPrice(TripPricerTask tripPricerTask, double rewards) {
+        List<Provider> providers = new ArrayList();
+        HashSet providersUsed = new HashSet();
 
+        for (int i = 0; i < 5; ++i) {
+            int multiple = ThreadLocalRandom.current().nextInt(100, 700);
+            double childrenDiscount = (tripPricerTask.getChildren() / 3);
+            double price =
+                    (double) (multiple * tripPricerTask.getAdults())
+                    + (double) multiple * childrenDiscount
+                            * (double) tripPricerTask.getNightsStay()
+                            + 0.99D
+                            - rewards;
+            if (price < 0.0D) {
+                price = 0.0D;
+            }
 
+            providers.add(new Provider(
+                    tripPricerTask.getAttractionId(),
+                    getProviderName(tripPricerTask.getApiKey(), tripPricerTask.getAdults()),
+                    price));
+        }
 
+        return providers;
+    }
+
+    public String getProviderName(String apiKey, int adults) {
+        int multiple = ThreadLocalRandom.current().nextInt(1, 10);
+        switch (multiple) {
+            case 1:
+                return "Holiday Travels";
+            case 2:
+                return "Enterprize Ventures Limited";
+            case 3:
+                return "Sunny Days";
+            case 4:
+                return "FlyAway Trips";
+            case 5:
+                return "United Partners Vacations";
+            case 6:
+                return "Dream Trips";
+            case 7:
+                return "Live Free";
+            case 8:
+                return "Dancing Waves Cruselines and Partners";
+            case 9:
+                return "AdventureCo";
+            default:
+                return "Cure-Your-Blues";
+        }
+    }
 }

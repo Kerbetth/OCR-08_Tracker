@@ -1,13 +1,13 @@
-package tourGuideTracker.bean.UserService;
+package tourGuideTracker.domain;
 
 import java.util.UUID;
 
-public class ProviderBean {
+public class Provider {
     public final String name;
     public final double price;
     public final UUID tripId;
 
-    public ProviderBean(UUID tripId, String name, double price) {
+    public Provider(UUID tripId, String name, double price) {
         this.name = name;
         this.tripId = tripId;
         this.price = price;

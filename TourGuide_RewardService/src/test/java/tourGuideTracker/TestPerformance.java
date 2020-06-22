@@ -12,13 +12,11 @@ import org.junit.Test;
 
 
 import org.junit.jupiter.api.BeforeEach;
-import tourGuideTracker.domain.VisitedLocation;
-import tourGuideTracker.domain.location.Attraction;
-import tourGuideTracker.repository.proxy.ServiceUserProxy;
+import tourGuideTracker.client.dto.TrackerService.VisitedLocation;
+import tourGuideTracker.client.dto.TrackerService.location.Attraction;
+import tourGuideTracker.client.ServiceUserProxy;
 import tourGuideTracker.service.RewardsService;
-import tourGuideTracker.service.TrackerService;
-import tourGuideTracker.bean.UserService.UserBean;
-import tourGuideTracker.repository.GpsUtil;
+import tourGuideTracker.domain.User;
 
 public class TestPerformance {
 
@@ -60,12 +58,12 @@ public class TestPerformance {
         // Users should be incremented up to 100,000, and test finishes within 15 minutes
         trackerService.setInternalUserNumber(100);
 
-        List<UserBean> allUsers = new ArrayList<>();
+        List<User> allUsers = new ArrayList<>();
         allUsers = serviceUserProxy.getAllUsers();
 
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
-        for (UserBean user : allUsers) {
+        for (User user : allUsers) {
             trackerService.trackUserLocation(user);
         }
         stopWatch.stop();
@@ -87,17 +85,17 @@ public class TestPerformance {
         TrackerService trackerService = new TrackerService(gpsUtil);
 
         Attraction attraction = gpsUtil.getAttractions().get(0);
-        List<UserBean> allUsers = new ArrayList<>();
+        List<User> allUsers = new ArrayList<>();
         allUsers = serviceUserProxy.getAllUsers();
         allUsers.forEach(u -> u.addToVisitedLocations(new VisitedLocation(u.getUserId(), attraction, new Date())));
 
         allUsers.forEach(u -> rewardsService.calculateRewards(u));
-        for (UserBean user : allUsers) {
+        for (User user : allUsers) {
             user.addToVisitedLocations(new VisitedLocation(user.getUserId(), attraction, new Date()));
             rewardsService.calculateRewards(user);
         }
 
-        for (UserBean user : allUsers) {
+        for (User user : allUsers) {
             assertTrue(user.getUserRewards().size() > 0);
         }
         stopWatch.stop();
