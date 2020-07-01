@@ -3,10 +3,7 @@ package tourGuideTracker.controller;
 import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 import tourGuideTracker.domain.FiveNearestAttractions;
@@ -21,19 +18,23 @@ public class TrackerController {
     @Autowired
     TrackerService trackerService;
 
+    @GetMapping("/")
+    public String welcome() {
+        return "You are on the tracker server of TourGuide";
+    }
 
     @GetMapping("/getLocation")
     public VisitedLocation getLocation(@RequestParam UUID userId) {
         return trackerService.trackUserLocation(userId);
     }
 
-    @GetMapping("/get5NearestAttractions")
-    public FiveNearestAttractions get5NearestAttractions(@RequestParam Location location) {
+    @RequestMapping("/get5NearestAttractions")
+    public FiveNearestAttractions get5NearestAttractions(@RequestBody Location location) {
         return trackerService.get5NearestAttractions(location);
     }
 
     @GetMapping("/getAllCurrentLocations")
-    public Map<UUID, Location> getAllCurrentLocations(List<UUID> userId) {
+    public Map<UUID, Location> getAllCurrentLocations(@RequestParam List<String> userId) {
         return trackerService.getCurrentLocationOfAllUsers(userId);
     }
 

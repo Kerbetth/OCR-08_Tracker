@@ -1,19 +1,13 @@
 package tourGuideTracker.tracker;
 
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
-
 import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import tourGuideTracker.clients.ServiceUserProxy;
 import tourGuideTracker.service.TrackerService;
-import tourGuideTracker.clients.dto.UserService.User;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class Tracker extends Thread {
 	private Logger logger = LoggerFactory.getLogger(Tracker.class);
@@ -22,8 +16,7 @@ public class Tracker extends Thread {
 	private final TrackerService trackerService;
 	private boolean stop = false;
 
-	@Autowired
-	ServiceUserProxy serviceUserProxy;
+
 
 	public Tracker(TrackerService trackerService) {
 		this.trackerService = trackerService;
@@ -47,7 +40,7 @@ public class Tracker extends Thread {
 				logger.debug("Tracker stopping");
 				break;
 			}
-			
+			/*
 			List<User> users = serviceUserProxy.getAllUsers();
 			logger.debug("Begin Tracker. Tracking " + users.size() + " users.");
 			stopWatch.start();
@@ -55,12 +48,13 @@ public class Tracker extends Thread {
 			stopWatch.stop();
 			logger.debug("Tracker Time Elapsed: " + TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()) + " seconds."); 
 			stopWatch.reset();
+
 			try {
 				logger.debug("Tracker sleeping");
 				TimeUnit.SECONDS.sleep(trackingPollingInterval);
 			} catch (InterruptedException e) {
 				break;
-			}
+			}*/
 		}
 		
 	}

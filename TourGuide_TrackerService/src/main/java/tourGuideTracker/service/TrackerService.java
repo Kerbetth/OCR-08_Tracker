@@ -35,11 +35,11 @@ public class TrackerService {
     }
 
 
-    public Map<UUID, Location> getCurrentLocationOfAllUsers(List<UUID> userIds) {
+    public Map<UUID, Location> getCurrentLocationOfAllUsers(List<String> userIds) {
         Map<UUID, Location> userLocations = new HashMap<>();
-        for (UUID userId : userIds) {
-            Location userLocation = trackUserLocation(userId).location;
-            userLocations.put(userId, userLocation);
+        for (String userId : userIds) {
+            Location userLocation = trackUserLocation(UUID.fromString(userId)).location;
+            userLocations.put(UUID.fromString(userId), userLocation);
         }
         return userLocations;
     }
