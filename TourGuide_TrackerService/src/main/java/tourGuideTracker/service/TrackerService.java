@@ -48,10 +48,10 @@ public class TrackerService {
         return gpsUtil.getUserLocation(userId);
     }
 
-    public Set<Attraction> getAllVisitedAttraction(List<VisitedLocation> visitedLocations) {
-        Set<Attraction> attractions =new HashSet<>();
+    public Set<UUID> getAllVisitedAttraction(List<VisitedLocation> visitedLocations) {
+        Set<UUID> attractions =new HashSet<>();
         for(VisitedLocation visitedLocation :visitedLocations) {
-            attractions.addAll(getNearByAttractions(visitedLocation));
+            attractions.addAll(getVisitedAttraction(visitedLocation));
         }
         return attractions;
     }
@@ -62,7 +62,6 @@ public class TrackerService {
         List<String> attractionsName = new ArrayList<>();
         List<Location> attractionsLocation = new ArrayList<>();
         List<Double> attractionsDistance = new ArrayList<>();
-        List<Integer> attractionsRewardPoints = new ArrayList<>();
         int gatheredReward = 0;
         for (Attraction attraction : gpsUtil.getAttractions()) {
             attractionsByDistance.put(getDistance(attraction, location), attraction);
@@ -73,16 +72,12 @@ public class TrackerService {
                 attractionsName.add(attraction.attractionName);
                 attractionsLocation.add(new Location(attraction.longitude, attraction.latitude));
                 attractionsDistance.add(getDistance(attraction, location));
-                //attractionsRewardPoints.add(serviceRewardsProxy.getRewards(attraction.attractionId, visitedLocation.userId));
             }
         });
         fiveNearestAttractions.setAttractionName(attractionsName);
         fiveNearestAttractions.setLatLongUser(location);
         fiveNearestAttractions.setLatLongAttraction(attractionsLocation);
         fiveNearestAttractions.setDistance(attractionsDistance);
-        for (Integer rewardPoints : attractionsRewardPoints) {
-            gatheredReward += rewardPoints;
-        }
         fiveNearestAttractions.setAttractionRewardPoints(gatheredReward);
         return fiveNearestAttractions;
     }
@@ -106,15 +101,12 @@ public class TrackerService {
     }
 
 
-    public List<Attraction> getNearByAttractions(VisitedLocation visitedLocation) {
-        List<Attraction> nearbyAttractions = new ArrayList<>();
+    public List<UUID> getVisitedAttraction(VisitedLocation visitedLocation) {
+        List<UUID> nearbyAttractions = new ArrayList<>();
 
         for (Attraction attraction : gpsUtil.getAttractions()) {
-            if (getDistance(attraction, visitedLocation.location) <= attractionProximityRange) {
-                nearbyAttractions.add(attraction);
-                if (nearbyAttractions.size() > 4) {
-                    return nearbyAttractions;
-                }
+            if (getDistance(attraction, visitedLocation.location) <= 1) {
+                nearbyAttractions.add(attraction.attractionId);
             }
         }
 
@@ -128,5 +120,6 @@ public class TrackerService {
             }
         });
     }
+
 
 }

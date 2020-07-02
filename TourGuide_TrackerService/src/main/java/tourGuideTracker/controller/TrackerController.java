@@ -38,8 +38,8 @@ public class TrackerController {
         return trackerService.getCurrentLocationOfAllUsers(userId);
     }
 
-    @GetMapping("/getAllVisitedLocations")
-    public Set<Attraction> getAllVisitedAttractions(List<VisitedLocation> visitedLocations) {
+    @RequestMapping("/getAllVisitedAttractions")
+    public Set<UUID> getAllVisitedAttractions(@RequestBody List<VisitedLocation> visitedLocations) {
         return trackerService.getAllVisitedAttraction(visitedLocations);
     }
 }
