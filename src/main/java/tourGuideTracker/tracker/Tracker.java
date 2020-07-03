@@ -5,6 +5,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tourGuideTracker.service.TrackerService;
 
+import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -20,7 +22,6 @@ public class Tracker extends Thread {
 
 	public Tracker(TrackerService trackerService) {
 		this.trackerService = trackerService;
-		
 		executorService.submit(this);
 	}
 	
@@ -31,7 +32,7 @@ public class Tracker extends Thread {
 		stop = true;
 		executorService.shutdownNow();
 	}
-	
+	/*
 	@Override
 	public void run() {
 		StopWatch stopWatch = new StopWatch();
@@ -40,8 +41,7 @@ public class Tracker extends Thread {
 				logger.debug("Tracker stopping");
 				break;
 			}
-			/*
-			List<User> users = serviceUserProxy.getAllUsers();
+			List<UUID> users = serviceUserProxy.getAllUsers();
 			logger.debug("Begin Tracker. Tracking " + users.size() + " users.");
 			stopWatch.start();
 			users.forEach(u -> trackerService.trackUserLocation(u));
@@ -54,8 +54,8 @@ public class Tracker extends Thread {
 				TimeUnit.SECONDS.sleep(trackingPollingInterval);
 			} catch (InterruptedException e) {
 				break;
-			}*/
+			}
 		}
-		
-	}
+
+	}*/
 }

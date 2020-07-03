@@ -122,4 +122,12 @@ public class TrackerService {
     }
 
 
+    public boolean isAttractionLocation(Location location) {
+        for (Attraction attraction : gpsUtil.getAttractions()) {
+            if (getDistance(attraction, location) <= 1) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

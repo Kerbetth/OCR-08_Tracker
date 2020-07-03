@@ -18,11 +18,6 @@ public class TrackerController {
     @Autowired
     TrackerService trackerService;
 
-    @GetMapping("/")
-    public String welcome() {
-        return "You are on the tracker server of TourGuide";
-    }
-
     @GetMapping("/getLocation")
     public VisitedLocation getLocation(@RequestParam UUID userId) {
         return trackerService.trackUserLocation(userId);
@@ -41,5 +36,10 @@ public class TrackerController {
     @RequestMapping("/getAllVisitedAttractions")
     public Set<UUID> getAllVisitedAttractions(@RequestBody List<VisitedLocation> visitedLocations) {
         return trackerService.getAllVisitedAttraction(visitedLocations);
+    }
+
+    @RequestMapping("/isAttractionLocation")
+    public boolean isAttractionLocation(@RequestBody Location location) {
+        return trackerService.isAttractionLocation(location);
     }
 }
