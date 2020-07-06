@@ -36,11 +36,11 @@ public class TrackerService {
     }
 
 
-    public Map<UUID, Location> getCurrentLocationOfAllUsers(List<String> userIds) {
+    public Map<UUID, Location> getCurrentLocationOfAllUsers(List<UUID> userIds) {
         Map<UUID, Location> userLocations = new HashMap<>();
-        for (String userId : userIds) {
-            Location userLocation = trackUserLocation(UUID.fromString(userId)).location;
-            userLocations.put(UUID.fromString(userId), userLocation);
+        for (UUID userId : userIds) {
+            Location userLocation = trackUserLocation(userId).location;
+            userLocations.put(userId, userLocation);
         }
         return userLocations;
     }
@@ -123,7 +123,8 @@ public class TrackerService {
     }
 
 
-    public Attraction getNewVisitedAttraction(Location location, List<UserReward> userRewards) {
+    public Attraction getNewVisitedAttraction(double longitude, double latitude, List<UserReward> userRewards) {
+        Location location = new Location(latitude,longitude);
         for (Attraction attraction : gpsUtil.getAttractions()) {
             if (getDistance(attraction, location) <= 1) {
                 for(UserReward userReward : userRewards){

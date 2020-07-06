@@ -1,7 +1,7 @@
 package tourGuideTracker;
 
 import lombok.extern.slf4j.Slf4j;
-import tourGuideTracker.clients.dto.UserService.User;
+import tourGuideTracker.domain.User;
 import tourGuideTracker.domain.VisitedLocation;
 import tourGuideTracker.domain.location.Attraction;
 import tourGuideTracker.domain.location.Location;
@@ -54,14 +54,17 @@ public class DataTest {
         return attractions;
     }
 
-
-
-
-
     private void generateUserLocationHistory(User user) {
+        ArrayList<VisitedLocation> visitedLocations = new ArrayList<>();
         IntStream.range(0, 3).forEach(i -> {
-            user.addToVisitedLocations(new VisitedLocation(user.getUserId(), new Location(generateRandomLatitude(), generateRandomLongitude()), getRandomTime()));
+            visitedLocations.add(
+                    new VisitedLocation(
+                    user.getUserId(),
+                            new Location(generateRandomLatitude(),
+                                    generateRandomLongitude()),
+                            getRandomTime()));
         });
+        user.setVisitedLocations(visitedLocations);
     }
 
     private double generateRandomLongitude() {

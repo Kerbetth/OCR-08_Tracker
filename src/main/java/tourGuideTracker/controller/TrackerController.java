@@ -19,7 +19,7 @@ public class TrackerController {
     @Autowired
     TrackerService trackerService;
 
-    @GetMapping("/getLocation")
+    @RequestMapping("/getLocation")
     public VisitedLocation getLocation(@RequestParam UUID userId) {
         return trackerService.trackUserLocation(userId);
     }
@@ -29,8 +29,8 @@ public class TrackerController {
         return trackerService.get5NearestAttractions(location);
     }
 
-    @GetMapping("/getCurrentLocationOfAllUsers")
-    public Map<UUID, Location> getCurrentLocationOfAllUsers(@RequestParam List<String> userId) {
+    @RequestMapping("/getCurrentLocationOfAllUsers")
+    public Map<UUID, Location> getCurrentLocationOfAllUsers(@RequestBody List<UUID> userId) {
         return trackerService.getCurrentLocationOfAllUsers(userId);
     }
 
@@ -40,7 +40,7 @@ public class TrackerController {
     }
 
     @RequestMapping("/getNewVisitedAttraction")
-    public Attraction getNewVisitedAttraction(@RequestBody Location location, @RequestParam List<UserReward> userRewards) {
-        return trackerService.getNewVisitedAttraction(location, userRewards);
+    public Attraction getNewVisitedAttraction(@RequestParam double longitude, @RequestParam double latitude, @RequestBody List<UserReward> userRewards) {
+        return trackerService.getNewVisitedAttraction(longitude, latitude, userRewards);
     }
 }

@@ -1,8 +1,9 @@
 buildscript {
     repositories {
-        mavenCentral()
+        maven {
+            url ' https://bintray.com/bintray/jcenter'
+        }
         jcenter()
-        google()
     }
     dependencies {
         classpath "io.spring.gradle:dependency-management-plugin:1.0.9.RELEASE"
@@ -59,7 +60,7 @@ dependencies {
 test {
     useJUnitPlatform()
 }
-
+/*
 jacoco {
     toolVersion = "0.8.4"
 }
@@ -85,4 +86,4 @@ jacocoTestCoverageVerification {
       }
     }
   }
-}
+}*/
