@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import tourGuideTracker.domain.UserReward;
 import tourGuideTracker.repository.GpsUtil;
 import tourGuideTracker.domain.location.Attraction;
 import tourGuideTracker.domain.location.Location;
@@ -25,7 +26,7 @@ public class TrackerService {
     public final Tracker tracker;
 
     private static final double STATUTE_MILES_PER_NAUTICAL_MILE = 1.15077945;
-    private int proximityBuffer = 10;
+    private int proximityBuffer = 1;
     private int attractionProximityRange = 200;
 
 
@@ -105,7 +106,7 @@ public class TrackerService {
         List<UUID> nearbyAttractions = new ArrayList<>();
 
         for (Attraction attraction : gpsUtil.getAttractions()) {
-            if (getDistance(attraction, visitedLocation.location) <= 1) {
+            if (isNearAttraction(visitedLocation.location, attraction)) {
                 nearbyAttractions.add(attraction.attractionId);
             }
         }
@@ -122,12 +123,16 @@ public class TrackerService {
     }
 
 
-    public boolean isAttractionLocation(Location location) {
+    public Attraction getNewVisitedAttraction(Location location, List<UserReward> userRewards) {
         for (Attraction attraction : gpsUtil.getAttractions()) {
             if (getDistance(attraction, location) <= 1) {
-                return true;
+                for(UserReward userReward : userRewards){
+                    if(userReward.attraction.attractionId == attraction.attractionId);
+                    return attraction;
+                }
+                return null;
             }
         }
-        return false;
+        return null;
     }
 }

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import tourGuideTracker.DataTest;
 import tourGuideTracker.controller.TrackerController;
 import tourGuideTracker.domain.UserLocation;
 import tourGuideTracker.service.TrackerService;
@@ -31,14 +32,13 @@ public class TrackerControllerTest {
     @BeforeEach
     void setup() {
         List<UserLocation> userLocations = new ArrayList<>();
-        when(trackerService.getLocationOfAllUsers()).thenReturn(userLocations);
 
     }
 
     @Test
     public void getAllCurrentLocationsShouldReturnAListOfUserLocation() {
         //ACT
-        List<UserLocation> userLocations = trackerController.getAllCurrentLocations();
+        List<UserLocation> userLocations = trackerController.getCurrentLocationOfAllUsers();
 
         //ASSERT
         assertThat(userLocations).hasSize(0);

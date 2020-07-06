@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 import tourGuideTracker.domain.FiveNearestAttractions;
+import tourGuideTracker.domain.UserReward;
 import tourGuideTracker.domain.VisitedLocation;
 import tourGuideTracker.domain.location.Attraction;
 import tourGuideTracker.domain.location.Location;
@@ -28,8 +29,8 @@ public class TrackerController {
         return trackerService.get5NearestAttractions(location);
     }
 
-    @GetMapping("/getAllCurrentLocations")
-    public Map<UUID, Location> getAllCurrentLocations(@RequestParam List<String> userId) {
+    @GetMapping("/getCurrentLocationOfAllUsers")
+    public Map<UUID, Location> getCurrentLocationOfAllUsers(@RequestParam List<String> userId) {
         return trackerService.getCurrentLocationOfAllUsers(userId);
     }
 
@@ -38,8 +39,8 @@ public class TrackerController {
         return trackerService.getAllVisitedAttraction(visitedLocations);
     }
 
-    @RequestMapping("/isAttractionLocation")
-    public boolean isAttractionLocation(@RequestBody Location location) {
-        return trackerService.isAttractionLocation(location);
+    @RequestMapping("/getNewVisitedAttraction")
+    public Attraction getNewVisitedAttraction(@RequestBody Location location, @RequestParam List<UserReward> userRewards) {
+        return trackerService.getNewVisitedAttraction(location, userRewards);
     }
 }
