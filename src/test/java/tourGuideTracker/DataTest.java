@@ -14,15 +14,6 @@ import java.util.stream.IntStream;
 @Slf4j
 public class DataTest {
 
-    private static int internalUserNumber = 100;
-    private static final String tripPricerApiKey = "test-server-api-key";
-
-    private final Map<String, User> internalUserMap = new HashMap<>();
-
-    public static void setInternalUserNumber(int internalUserNumber) {
-        internalUserNumber = internalUserNumber;
-    }
-
     public List<Attraction> getAttractionsForTest() {
         List<Attraction> attractions = new ArrayList();
         attractions.add(new Attraction("Disneyland", "Anaheim", "CA", 33.817595D, -117.922008D));
@@ -52,48 +43,5 @@ public class DataTest {
         attractions.add(new Attraction("Bronx Zoo", "Bronx", "NY", 40.852905D, -73.872971D));
         attractions.add(new Attraction("Cinderella Castle", "Orlando", "FL", 28.419411D, -81.5812D));
         return attractions;
-    }
-
-    private void generateUserLocationHistory(User user) {
-        ArrayList<VisitedLocation> visitedLocations = new ArrayList<>();
-        IntStream.range(0, 3).forEach(i -> {
-            visitedLocations.add(
-                    new VisitedLocation(
-                    user.getUserId(),
-                            new Location(generateRandomLatitude(),
-                                    generateRandomLongitude()),
-                            getRandomTime()));
-        });
-        user.setVisitedLocations(visitedLocations);
-    }
-
-    private double generateRandomLongitude() {
-        double leftLimit = -180;
-        double rightLimit = 180;
-        return leftLimit + new Random().nextDouble() * (rightLimit - leftLimit);
-    }
-
-    private double generateRandomLatitude() {
-        double leftLimit = -85.05112878;
-        double rightLimit = 85.05112878;
-        return leftLimit + new Random().nextDouble() * (rightLimit - leftLimit);
-    }
-
-    private Date getRandomTime() {
-        LocalDateTime localDateTime = LocalDateTime.now().minusDays(new Random().nextInt(30));
-        return Date.from(localDateTime.toInstant(ZoneOffset.UTC));
-    }
-
-    private void initializeInternalUsers() {
-        IntStream.range(0, internalUserNumber).forEach(i -> {
-            String userName = "internalUser" + i;
-            String phone = "000";
-            String email = userName + "@tourGuide.com";
-            User user = new User(UUID.randomUUID(), userName, phone, email);
-            generateUserLocationHistory(user);
-
-            internalUserMap.put(userName, user);
-        });
-        log.debug("Created " + internalUserNumber + " internal test users.");
     }
 }

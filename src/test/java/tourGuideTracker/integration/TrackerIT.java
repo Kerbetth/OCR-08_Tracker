@@ -1,18 +1,14 @@
 package tourGuideTracker.integration;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import tourGuideTracker.controller.TrackerController;
 import tourGuideTracker.domain.FiveNearestAttractions;
-import tourGuideTracker.domain.UserReward;
+import tourGuideTracker.domain.TrackerResponse;
 import tourGuideTracker.domain.VisitedLocation;
 import tourGuideTracker.domain.location.Location;
-import tourGuideTracker.repository.GpsUtil;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -20,7 +16,6 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -32,8 +27,8 @@ public class TrackerIT {
     @Test
     public void getLocation() {
         UUID uuid = UUID.randomUUID();
-        VisitedLocation visitedLocation = trackerControllers.getLocation(uuid);
-        assertThat(visitedLocation.userId).isEqualTo(uuid);
+        TrackerResponse visitedLocation = trackerControllers.trackUserLocation(uuid.toString(),null);
+        assertThat(visitedLocation.visitedLocation.userId).isEqualTo(uuid);
     }
 
     @Test
@@ -50,9 +45,9 @@ public class TrackerIT {
     public void getCurrentLocationOfAllUsers() {
         UUID uuid = UUID.randomUUID();
         UUID uuid2 = UUID.randomUUID();
-        List<UUID> uuids = new ArrayList<>();
-        uuids.add(uuid);
-        uuids.add(uuid2);
+        List<String> uuids = new ArrayList<>();
+        uuids.add(uuid.toString());
+        uuids.add(uuid2.toString());
         Map<UUID, Location> uuidLocationMap = trackerControllers.getCurrentLocationOfAllUsers(uuids);
         assertThat(uuidLocationMap).hasSize(2);
         int iteration = 0;

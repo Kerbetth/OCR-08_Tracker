@@ -7,13 +7,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import tourGuideTracker.domain.TrackerResponse;
 import tourGuideTracker.domain.UserReward;
 import tourGuideTracker.repository.GpsUtil;
 import tourGuideTracker.domain.location.Attraction;
 import tourGuideTracker.domain.location.Location;
 import tourGuideTracker.domain.VisitedLocation;
 import tourGuideTracker.domain.FiveNearestAttractions;
-import tourGuideTracker.tracker.Tracker;
 
 
 @Service
@@ -23,35 +23,37 @@ public class TrackerService {
     @Autowired
     private GpsUtil gpsUtil;
 
-    public final Tracker tracker;
-
     private static final double STATUTE_MILES_PER_NAUTICAL_MILE = 1.15077945;
     private int proximityBuffer = 1;
     private int attractionProximityRange = 200;
 
 
-    public TrackerService() {
-        tracker = new Tracker(this);
-        addShutDownHook();
-    }
-
-
-    public Map<UUID, Location> getCurrentLocationOfAllUsers(List<UUID> userIds) {
+    public Map<UUID, Location> getCurrentLocationOfAllUsers(List<String> userIds) {
         Map<UUID, Location> userLocations = new HashMap<>();
-        for (UUID userId : userIds) {
-            Location userLocation = trackUserLocation(userId).location;
-            userLocations.put(userId, userLocation);
+        for (String userId : userIds) {
+            Location userLocation = trackUserLocation(userId, null).visitedLocation.location;
+            userLocations.put(UUID.fromString(userId), userLocation);
         }
         return userLocations;
     }
 
-    public VisitedLocation trackUserLocation(UUID userId) {
-        return gpsUtil.getUserLocation(userId);
+    public TrackerResponse trackUserLocation(String userId, List<UserReward> userRewards) {
+        VisitedLocation visitedLocation = gpsUtil.getUserLocation(UUID.fromString(userId));
+        log.info("User with ID:" + userId + " has been tracked");
+        Attraction attraction = null;
+        if (userRewards != null) {
+            attraction = getNewVisitedAttraction(visitedLocation.location, userRewards);
+            if (attraction != null) {
+                log.info("User with ID:" + userId + " has visited for the first time: " + attraction.attractionName);
+            }
+        }
+        return new TrackerResponse(visitedLocation, attraction);
+
     }
 
     public Set<UUID> getAllVisitedAttraction(List<VisitedLocation> visitedLocations) {
-        Set<UUID> attractions =new HashSet<>();
-        for(VisitedLocation visitedLocation :visitedLocations) {
+        Set<UUID> attractions = new HashSet<>();
+        for (VisitedLocation visitedLocation : visitedLocations) {
             attractions.addAll(getVisitedAttraction(visitedLocation));
         }
         return attractions;
@@ -114,21 +116,12 @@ public class TrackerService {
         return nearbyAttractions;
     }
 
-    private void addShutDownHook() {
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            public void run() {
-                tracker.stopTracking();
-            }
-        });
-    }
 
-
-    public Attraction getNewVisitedAttraction(double longitude, double latitude, List<UserReward> userRewards) {
-        Location location = new Location(latitude,longitude);
+    public Attraction getNewVisitedAttraction(Location location, List<UserReward> userRewards) {
         for (Attraction attraction : gpsUtil.getAttractions()) {
             if (getDistance(attraction, location) <= 1) {
-                for(UserReward userReward : userRewards){
-                    if(userReward.attraction.attractionId == attraction.attractionId);
+                for (UserReward userReward : userRewards) {
+                    if (userReward.attraction.attractionId == attraction.attractionId) ;
                     return attraction;
                 }
                 return null;

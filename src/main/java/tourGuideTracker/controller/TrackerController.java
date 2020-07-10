@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 import tourGuideTracker.domain.FiveNearestAttractions;
+import tourGuideTracker.domain.TrackerResponse;
 import tourGuideTracker.domain.UserReward;
 import tourGuideTracker.domain.VisitedLocation;
 import tourGuideTracker.domain.location.Attraction;
@@ -19,9 +20,9 @@ public class TrackerController {
     @Autowired
     TrackerService trackerService;
 
-    @RequestMapping("/getLocation")
-    public VisitedLocation getLocation(@RequestParam UUID userId) {
-        return trackerService.trackUserLocation(userId);
+    @RequestMapping("/trackUserLocation")
+    public TrackerResponse trackUserLocation(@RequestParam String userId, @RequestBody List<UserReward> userRewards) {
+        return trackerService.trackUserLocation(userId, userRewards);
     }
 
     @RequestMapping("/get5NearestAttractions")
@@ -30,7 +31,7 @@ public class TrackerController {
     }
 
     @RequestMapping("/getCurrentLocationOfAllUsers")
-    public Map<UUID, Location> getCurrentLocationOfAllUsers(@RequestBody List<UUID> userId) {
+    public Map<UUID, Location> getCurrentLocationOfAllUsers(@RequestBody List<String> userId) {
         return trackerService.getCurrentLocationOfAllUsers(userId);
     }
 
@@ -38,9 +39,9 @@ public class TrackerController {
     public Set<UUID> getAllVisitedAttractions(@RequestBody List<VisitedLocation> visitedLocations) {
         return trackerService.getAllVisitedAttraction(visitedLocations);
     }
-
+/*
     @RequestMapping("/getNewVisitedAttraction")
     public Attraction getNewVisitedAttraction(@RequestParam double longitude, @RequestParam double latitude, @RequestBody List<UserReward> userRewards) {
         return trackerService.getNewVisitedAttraction(longitude, latitude, userRewards);
-    }
+    }*/
 }
