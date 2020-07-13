@@ -37,12 +37,12 @@ public class TrackerService {
         return userLocations;
     }
 
-    public TrackerResponse trackUserLocation(String userId, List<UserReward> userRewards) {
+    public TrackerResponse trackUserLocation(String userId, List<String> attractionIds) {
         VisitedLocation visitedLocation = gpsUtil.getUserLocation(UUID.fromString(userId));
-        log.info("User with ID:" + userId + " has been tracked");
+        //log.info("User with ID:" + userId + " has been tracked");
         Attraction attraction = null;
-        if (userRewards != null) {
-            attraction = getNewVisitedAttraction(visitedLocation.location, userRewards);
+        if (attractionIds != null) {
+            attraction = getNewVisitedAttraction(visitedLocation.location, attractionIds);
             if (attraction != null) {
                 log.info("User with ID:" + userId + " has visited for the first time: " + attraction.attractionName);
             }
@@ -117,11 +117,11 @@ public class TrackerService {
     }
 
 
-    public Attraction getNewVisitedAttraction(Location location, List<UserReward> userRewards) {
+    public Attraction getNewVisitedAttraction(Location location, List<String> attractionIds) {
         for (Attraction attraction : gpsUtil.getAttractions()) {
             if (getDistance(attraction, location) <= 1) {
-                for (UserReward userReward : userRewards) {
-                    if (userReward.attraction.attractionId == attraction.attractionId) ;
+                for (String attractionId : attractionIds) {
+                    if (UUID.fromString(attractionId) == attraction.attractionId) ;
                     return attraction;
                 }
                 return null;
