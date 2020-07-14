@@ -1,6 +1,7 @@
 package tourGuideTracker.service;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 
 import lombok.extern.slf4j.Slf4j;
@@ -40,12 +41,10 @@ public class TrackerService {
     public TrackerResponse trackUserLocation(String userId, List<String> attractionIds) {
         VisitedLocation visitedLocation = gpsUtil.getUserLocation(UUID.fromString(userId));
         //log.info("User with ID:" + userId + " has been tracked");
-        Attraction attraction = null;
-        if (attractionIds != null) {
-            attraction = getNewVisitedAttraction(visitedLocation.location, attractionIds);
-            if (attraction != null) {
-                log.info("User with ID:" + userId + " has visited for the first time: " + attraction.attractionName);
-            }
+        Attraction attraction = getNewVisitedAttraction(visitedLocation.location, attractionIds);
+        if (attraction != null) {
+            log.info("User with ID:" + userId + " has visited for the first time: " + attraction.attractionName);
+
         }
         return new TrackerResponse(visitedLocation, attraction);
 
@@ -118,15 +117,11 @@ public class TrackerService {
 
 
     public Attraction getNewVisitedAttraction(Location location, List<String> attractionIds) {
-        for (Attraction attraction : gpsUtil.getAttractions()) {
-            if (getDistance(attraction, location) <= 1) {
-                for (String attractionId : attractionIds) {
-                    if (UUID.fromString(attractionId) == attraction.attractionId) ;
-                    return attraction;
-                }
-                return null;
-            }
-        }
-        return null;
+        return gpsUtil.getAttractions()
+                .stream()
+                .filter(Predicate.not(attraction -> attractionIds.contains(attraction.attractionId.toString())))
+                .filter(attraction -> getDistance(attraction, location) < 1)
+                .findFirst()
+                .orElse(null);
     }
 }
