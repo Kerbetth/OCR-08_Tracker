@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import tourGuideTracker.DataTest;
 import tourGuideTracker.domain.FiveNearestAttractions;
+import tourGuideTracker.domain.TrackerResponse;
 import tourGuideTracker.domain.User;
 import tourGuideTracker.domain.VisitedLocation;
 import tourGuideTracker.domain.location.Attraction;
@@ -54,20 +55,21 @@ public class TrackerServiceTest {
     @Test
     public void getLocationShouldReturnGoodVisitedLocation() {
         //ACT
-        VisitedLocation visitedLocation = trackerService.trackUserLocation(users.get(0).getUserId());
+        List<String> userId = new ArrayList<>();
+        TrackerResponse trackerResponse = trackerService.trackUserLocation(users.get(0).getUserId().toString(), userId);
 
         //ASSERT
-        assertThat(visitedLocation.location.latitude).isEqualTo(1.0);
-        assertThat(visitedLocation.location.longitude).isEqualTo(2.0);
-        assertThat(visitedLocation.timeVisited).isBefore(new Date());
+        assertThat(trackerResponse.visitedLocation.location.latitude).isEqualTo(1.0);
+        assertThat(trackerResponse.visitedLocation.location.longitude).isEqualTo(2.0);
+        assertThat(trackerResponse.visitedLocation.timeVisited).isBefore(new Date());
     }
 
     @Test
     public void getLocationOfAllUsersShouldReturnGoodUserLocations() {
         //ACT
-        List<UUID> userId = new ArrayList<>();
-        userId.add(UUID.randomUUID());
-        userId.add(UUID.randomUUID());
+        List<String> userId = new ArrayList<>();
+        userId.add(UUID.randomUUID().toString());
+        userId.add(UUID.randomUUID().toString());
         Map<UUID, Location> userLocations = trackerService.getCurrentLocationOfAllUsers(userId);
 
         //ASSERT
@@ -118,9 +120,10 @@ public class TrackerServiceTest {
     @Test
     public void trackUserLocationShouldReturnLastVisitedLocation() {
         //ACT
-        VisitedLocation visitedLocation = trackerService.trackUserLocation(users.get(0).getUserId());
+        List<String> userId = new ArrayList<>();
+        TrackerResponse trackerResponse = trackerService.trackUserLocation(users.get(0).getUserId().toString(), userId);
 
         //ASSERT
-        assertThat(visitedLocation).isEqualTo(users.get(0).getVisitedLocations().get(0));
+        assertThat(trackerResponse.visitedLocation).isEqualTo(users.get(0).getVisitedLocations().get(0));
     }
 }

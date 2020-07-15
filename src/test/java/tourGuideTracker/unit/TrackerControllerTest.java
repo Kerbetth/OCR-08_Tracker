@@ -34,17 +34,10 @@ public class TrackerControllerTest {
 
 
     @Test
-    public void getLocation() throws Exception {
-        ObjectMapper postMapper = new ObjectMapper();
-        String requestBody = null;
-        try {
-            requestBody = postMapper
-                    .writeValueAsString(UUID.randomUUID());
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        this.mockMvc.perform(post("/getLocation?userId=" + UUID.randomUUID())
+    public void trackUserLocation() throws Exception {
+        this.mockMvc.perform(post("/trackUserLocation?userId=" + UUID.randomUUID())
                 .contentType(MediaType.APPLICATION_JSON)
+                .content(new ArrayList<>().toString())
         )
                 .andExpect(status().isOk());
     }
@@ -108,33 +101,4 @@ public class TrackerControllerTest {
                 .andExpect(status().isOk());
     }
 
-    @Test
-    public void getNewVisitedAttraction() throws Exception {
-        List<UserReward> userIds = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            userIds.add(
-                    new UserReward(
-                            new VisitedLocation(
-                                    UUID.randomUUID(),
-                                    new Location(33.817595D, -117.922008D),
-                                    new Date()
-                            ),
-                            dataTest.getAttractionsForTest().get(0)));
-        }
-
-        ObjectMapper postMapper = new ObjectMapper();
-        String requestBody = null;
-        try {
-            requestBody = postMapper
-                    .writeValueAsString(userIds);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-
-        this.mockMvc.perform(post("/getNewVisitedAttraction?latitude=" + 33.817595D + "&longitude=" + -117.922008D)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody)
-        )
-                .andExpect(status().isOk());
-    }
 }

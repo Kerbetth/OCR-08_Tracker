@@ -32,7 +32,7 @@ public class TrackerService {
     public Map<UUID, Location> getCurrentLocationOfAllUsers(List<String> userIds) {
         Map<UUID, Location> userLocations = new HashMap<>();
         for (String userId : userIds) {
-            Location userLocation = trackUserLocation(userId, null).visitedLocation.location;
+            Location userLocation = trackUserLocation(userId, new ArrayList<>()).visitedLocation.location;
             userLocations.put(UUID.fromString(userId), userLocation);
         }
         return userLocations;

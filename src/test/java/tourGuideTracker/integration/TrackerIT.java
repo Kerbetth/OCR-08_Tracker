@@ -18,16 +18,15 @@ import java.util.concurrent.ThreadLocalRandom;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @SpringBootTest
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class TrackerIT {
 
     @Autowired
     TrackerController trackerControllers;
 
     @Test
-    public void getLocation() {
+    public void trackUserLocation() {
         UUID uuid = UUID.randomUUID();
-        TrackerResponse visitedLocation = trackerControllers.trackUserLocation(uuid.toString(),null);
+        TrackerResponse visitedLocation = trackerControllers.trackUserLocation(uuid.toString(),new ArrayList<>());
         assertThat(visitedLocation.visitedLocation.userId).isEqualTo(uuid);
     }
 
@@ -52,10 +51,9 @@ public class TrackerIT {
         assertThat(uuidLocationMap).hasSize(2);
         int iteration = 0;
         for (Map.Entry<UUID, Location> entry : uuidLocationMap.entrySet()) {
-            assertThat(entry.getKey()).isEqualTo(uuids.get(iteration));
+            assertThat(entry.getKey().toString()).isEqualTo(uuids.get(iteration));
             iteration++;
         }
-
     }
 
     @Test
@@ -70,10 +68,5 @@ public class TrackerIT {
 
         Set<UUID> uuids = trackerControllers.getAllVisitedAttractions(userIds);
         assertThat(uuids).hasSize(1);
-    }
-
-    @Test
-    public void getNewVisitedAttraction() {
-
     }
 }
