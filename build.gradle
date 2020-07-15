@@ -20,7 +20,7 @@ apply plugin: "jacoco"
 
 
 bootJar {
-    archiveBaseName = 'tourGuide'
+    archiveBaseName = 'tourGuide-tracker'
     archiveVersion =  '1.0.0'
 }
 
