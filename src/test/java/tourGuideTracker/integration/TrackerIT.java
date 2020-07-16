@@ -26,7 +26,7 @@ public class TrackerIT {
     @Test
     public void trackUserLocation() {
         UUID uuid = UUID.randomUUID();
-        TrackerResponse visitedLocation = trackerControllers.trackUserLocation(uuid.toString(),new ArrayList<>());
+        TrackerResponse visitedLocation = trackerControllers.trackUserLocation(uuid.toString());
         assertThat(visitedLocation.visitedLocation.userId).isEqualTo(uuid);
     }
 
