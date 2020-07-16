@@ -26,7 +26,7 @@ public class TrackerIT {
     @Test
     public void trackUserLocation() {
         UUID uuid = UUID.randomUUID();
-        TrackerResponse visitedLocation = trackerControllers.trackUserLocation(uuid.toString(),new ArrayList<>());
+        TrackerResponse visitedLocation = trackerControllers.trackUserLocation(uuid.toString());
         assertThat(visitedLocation.visitedLocation.userId).isEqualTo(uuid);
     }
 
@@ -49,11 +49,6 @@ public class TrackerIT {
         uuids.add(uuid2.toString());
         Map<UUID, Location> uuidLocationMap = trackerControllers.getCurrentLocationOfAllUsers(uuids);
         assertThat(uuidLocationMap).hasSize(2);
-        int iteration = 0;
-        for (Map.Entry<UUID, Location> entry : uuidLocationMap.entrySet()) {
-            assertThat(entry.getKey().toString()).isEqualTo(uuids.get(iteration));
-            iteration++;
-        }
     }
 
     @Test

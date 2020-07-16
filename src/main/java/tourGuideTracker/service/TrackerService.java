@@ -32,16 +32,16 @@ public class TrackerService {
     public Map<UUID, Location> getCurrentLocationOfAllUsers(List<String> userIds) {
         Map<UUID, Location> userLocations = new HashMap<>();
         for (String userId : userIds) {
-            Location userLocation = trackUserLocation(userId, new ArrayList<>()).visitedLocation.location;
+            Location userLocation = trackUserLocation(userId).visitedLocation.location;
             userLocations.put(UUID.fromString(userId), userLocation);
         }
         return userLocations;
     }
 
-    public TrackerResponse trackUserLocation(String userId, List<String> attractionIds) {
+    public TrackerResponse trackUserLocation(String userId) {
         VisitedLocation visitedLocation = gpsUtil.getUserLocation(UUID.fromString(userId));
         //log.info("User with ID:" + userId + " has been tracked");
-        Attraction attraction = getNewVisitedAttraction(visitedLocation.location, attractionIds);
+        Attraction attraction = isAttractionLocation(visitedLocation.location);
         if (attraction != null) {
             log.info("User with ID:" + userId + " has visited for the first time: " + attraction.attractionName);
 
@@ -115,11 +115,9 @@ public class TrackerService {
         return nearbyAttractions;
     }
 
-
-    public Attraction getNewVisitedAttraction(Location location, List<String> attractionIds) {
+    public Attraction isAttractionLocation(Location location) {
         return gpsUtil.getAttractions()
                 .stream()
-                .filter(Predicate.not(attraction -> attractionIds.contains(attraction.attractionId.toString())))
                 .filter(attraction -> getDistance(attraction, location) < 1)
                 .findFirst()
                 .orElse(null);

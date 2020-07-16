@@ -21,8 +21,8 @@ public class TrackerController {
     TrackerService trackerService;
 
     @RequestMapping("/trackUserLocation")
-    public TrackerResponse trackUserLocation(@RequestParam String userId, @RequestBody List<String> attractionId) {
-        return trackerService.trackUserLocation(userId, attractionId);
+    public TrackerResponse trackUserLocation(@RequestParam String userId) {
+        return trackerService.trackUserLocation(userId);
     }
 
     @RequestMapping("/get5NearestAttractions")
