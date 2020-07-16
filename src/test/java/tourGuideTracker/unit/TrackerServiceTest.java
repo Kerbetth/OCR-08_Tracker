@@ -56,7 +56,7 @@ public class TrackerServiceTest {
     public void getLocationShouldReturnGoodVisitedLocation() {
         //ACT
         List<String> userId = new ArrayList<>();
-        TrackerResponse trackerResponse = trackerService.trackUserLocation(users.get(0).getUserId().toString(), userId);
+        TrackerResponse trackerResponse = trackerService.trackUserLocation(users.get(0).getUserId().toString());
 
         //ASSERT
         assertThat(trackerResponse.visitedLocation.location.latitude).isEqualTo(1.0);
@@ -121,7 +121,7 @@ public class TrackerServiceTest {
     public void trackUserLocationShouldReturnLastVisitedLocation() {
         //ACT
         List<String> userId = new ArrayList<>();
-        TrackerResponse trackerResponse = trackerService.trackUserLocation(users.get(0).getUserId().toString(), userId);
+        TrackerResponse trackerResponse = trackerService.trackUserLocation(users.get(0).getUserId().toString());
 
         //ASSERT
         assertThat(trackerResponse.visitedLocation).isEqualTo(users.get(0).getVisitedLocations().get(0));
