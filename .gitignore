@@ -19,8 +19,6 @@ target/
 *.iml
 *.ipr
 .gradle/
-gradle/
-libs/
 
 ### NetBeans ###
 /nbproject/private/
@@ -28,11 +26,9 @@ libs/
 /dist/
 /nbdist/
 /.nb-gradle/
-build/
+/build/
 
 ### VS Code ###
 .vscode/
-/.idea/
 /.settings/
-/gradle/
 /.idea/

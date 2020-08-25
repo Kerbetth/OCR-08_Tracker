@@ -1,22 +1,22 @@
-package tourGuideTracker.domain;
+package tourguidetracker.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import tourGuideTracker.domain.location.Attraction;
+import tourguidetracker.domain.location.Attraction;
 
 public class UserReward {
 
     public final VisitedLocation visitedLocation;
-    public final Attraction attraction;
+    public final tourguidetracker.domain.location.Attraction attraction;
     private int rewardPoints;
 
-    public UserReward(VisitedLocation visitedLocation, Attraction attraction, int rewardPoints) {
+    public UserReward(VisitedLocation visitedLocation, tourguidetracker.domain.location.Attraction attraction, int rewardPoints) {
         this.visitedLocation = visitedLocation;
         this.attraction = attraction;
         this.rewardPoints = rewardPoints;
     }
 
     @JsonCreator
-    public UserReward(VisitedLocation visitedLocation, Attraction attraction) {
+    public UserReward(VisitedLocation visitedLocation, tourguidetracker.domain.location.Attraction attraction) {
         this.visitedLocation = visitedLocation;
         this.attraction = attraction;
     }
