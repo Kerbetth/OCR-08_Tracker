@@ -1,15 +1,9 @@
-package tourGuideTracker;
+package tourguidetracker;
 
 import lombok.extern.slf4j.Slf4j;
-import tourGuideTracker.domain.User;
-import tourGuideTracker.domain.VisitedLocation;
-import tourGuideTracker.domain.location.Attraction;
-import tourGuideTracker.domain.location.Location;
+import tourguidetracker.domain.location.Attraction;
 
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.*;
-import java.util.stream.IntStream;
 
 @Slf4j
 public class DataTest {

@@ -1,4 +1,4 @@
-package tourGuideTracker.domain.pricerreward;
+package tourguidetracker.domain.pricerreward;
 
 import java.util.UUID;
 
