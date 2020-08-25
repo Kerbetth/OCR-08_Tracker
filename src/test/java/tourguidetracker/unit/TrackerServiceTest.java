@@ -1,4 +1,4 @@
-package tourGuideTracker.unit;
+package tourguidetracker.unit;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -6,15 +6,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import tourGuideTracker.DataTest;
-import tourGuideTracker.domain.FiveNearestAttractions;
-import tourGuideTracker.domain.TrackerResponse;
-import tourGuideTracker.domain.User;
-import tourGuideTracker.domain.VisitedLocation;
-import tourGuideTracker.domain.location.Attraction;
-import tourGuideTracker.domain.location.Location;
-import tourGuideTracker.repository.GpsUtil;
-import tourGuideTracker.service.TrackerService;
+import tourguidetracker.DataTest;
+import tourguidetracker.domain.FiveNearestAttractions;
+import tourguidetracker.domain.TrackerResponse;
+import tourguidetracker.domain.User;
+import tourguidetracker.domain.VisitedLocation;
+import tourguidetracker.domain.location.Attraction;
+import tourguidetracker.domain.location.Location;
+import tourguidetracker.repository.GpsUtil;
+import tourguidetracker.service.TrackerService;
 
 import java.util.*;
 
@@ -83,9 +83,7 @@ public class TrackerServiceTest {
         FiveNearestAttractions fiveNearestAttractions = trackerService.get5NearestAttractions(location);
 
         //ASSERT
-        assertThat(fiveNearestAttractions.getAttractionName()).hasSize(5);
-        assertThat(fiveNearestAttractions.getDistance()).hasSize(5);
-        assertThat(fiveNearestAttractions.getLatLongAttraction()).hasSize(5);
+        assertThat(fiveNearestAttractions.getFiveNearestAttractions()).hasSize(5);
         assertThat(fiveNearestAttractions.getLatLongUser()).isEqualTo(location);
     }
 
@@ -106,7 +104,7 @@ public class TrackerServiceTest {
     public void isNearAttractionShouldReturnTrueIfLessThan5Miles() {
         Location location = new Location(33.81, -117.92);
         Location location2 = new Location(33, -117);
-        Attraction attraction = dataTest.getAttractionsForTest().get(0);
+        tourguidetracker.domain.location.Attraction attraction = dataTest.getAttractionsForTest().get(0);
 
         //ACT
         boolean isNear = trackerService.isNearAttraction(location, attraction);

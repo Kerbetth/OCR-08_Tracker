@@ -1,9 +1,10 @@
-package tourGuideTracker.domain;
+package tourguidetracker.domain;
 
 
 import lombok.Getter;
 import lombok.Setter;
-import tourGuideTracker.domain.pricerreward.Provider;
+import tourguidetracker.domain.location.Attraction;
+import tourguidetracker.domain.pricerreward.Provider;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -23,23 +24,6 @@ public class User {
 	private List<UserReward> userRewards = new ArrayList<>();
 	private UserPreferences userPreferences = new UserPreferences();
 	private List<Provider> tripDeals = new ArrayList<>();
-
-	public User(UUID userId, String userName) {
-		this.userId = userId;
-		this.userName = userName;
-	}
-
-	public User(UUID userId, String userName, String phoneNumber, String emailAddress, Date latestLocationTimestamp, List<VisitedLocation> visitedLocations, List<UserReward> userRewards, UserPreferences userPreferences, List<Provider> tripDeals) {
-		this.userId = userId;
-		this.userName = userName;
-		this.phoneNumber = phoneNumber;
-		this.emailAddress = emailAddress;
-		this.latestLocationTimestamp = latestLocationTimestamp;
-		this.visitedLocations = visitedLocations;
-		this.userRewards = userRewards;
-		this.userPreferences = userPreferences;
-		this.tripDeals = tripDeals;
-	}
 
 
 	public User(UUID userId, String userName, String phoneNumber, String emailAddress) {

@@ -1,4 +1,4 @@
-package tourGuideTracker.domain;
+package tourguidetracker.domain;
 
 import org.javamoney.moneta.Money;
 
